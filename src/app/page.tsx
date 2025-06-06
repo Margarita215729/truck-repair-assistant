@@ -7,7 +7,7 @@ import { AudioRecorderWrapper } from '../../components/audio/AudioRecorderWrappe
 import { AudioAnalysisDisplay } from '../../components/audio/AudioAnalysisDisplay';
 import { GitHubModelsService } from '../../lib/ai/github-models';
 import { localStorageService } from '../../lib/storage/local-storage';
-import { TruckModel } from '../../data/trucks/models';
+import { TruckModel } from '../data/trucks/models';
 
 import dynamic from 'next/dynamic';
 

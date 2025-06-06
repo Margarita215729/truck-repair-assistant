@@ -48,6 +48,10 @@ jobs:
         echo "Project files prepared for build!"
         EOL
         chmod +x scripts/prepare-build.sh
+    
+    # Запускаем скрипт подготовки файлов
+    - name: Run prepare-build script
+      run: ./scripts/prepare-build.sh
         
     - name: Build application
       run: npm run build

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { TruckModel } from '../../data/trucks/models';
+import { TruckModel } from '../data/trucks/models';
 
 interface DiagnosisFormProps {
   selectedTruck: (TruckModel & { year: number; engine: string }) | null;

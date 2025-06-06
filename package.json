@@ -5,10 +5,11 @@
   "scripts": {
     "dev": "next dev --turbopack",
     "dev:standard": "next dev",
-    "build": "next build",
+    "prepare-build": "sh ./scripts/prepare-build.sh",
+    "build": "npm run prepare-build && next build",
     "start": "next start",
     "lint": "next lint",
-    "export": "next build",
+    "export": "npm run prepare-build && next build",
     "deploy": "npm run export && gh-pages -d out",
     "db:up": "docker-compose up -d postgres",
     "db:down": "docker-compose down",

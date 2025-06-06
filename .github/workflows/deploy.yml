@@ -34,6 +34,21 @@ jobs:
         echo "NEXT_PUBLIC_BASE_PATH=${{ secrets.NEXT_PUBLIC_BASE_PATH || '/truck-repair-assistant' }}" >> $GITHUB_ENV
         echo "NEXT_PUBLIC_NOMINATIM_URL=${{ secrets.NEXT_PUBLIC_NOMINATIM_URL || 'https://nominatim.openstreetmap.org' }}" >> $GITHUB_ENV
         
+    # Создаем директорию для скриптов, если она не существует
+    - name: Ensure scripts directory exists
+      run: mkdir -p scripts
+        
+    # Создаем скрипт подготовки файлов
+    - name: Create prepare-build script
+      run: |
+        cat > scripts/prepare-build.sh << 'EOL'
+        #!/bin/bash
+        mkdir -p src/data/trucks
+        cp -r data/trucks/* src/data/trucks/ || echo "No model files to copy"
+        echo "Project files prepared for build!"
+        EOL
+        chmod +x scripts/prepare-build.sh
+        
     - name: Build application
       run: npm run build
       

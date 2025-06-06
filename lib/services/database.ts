@@ -1,5 +1,5 @@
 import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
-import { Truck, MaintenanceRecord, ServiceLocation, DiagnosticSession, ChatConversation, ChatMessage } from '@/lib/types';
+import { Truck, MaintenanceRecord, ServiceLocation, DiagnosticSession, ChatConversation, ChatMessage } from '@/lib/types/index';
 
 interface DbRow {
   [key: string]: unknown;

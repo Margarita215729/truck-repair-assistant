@@ -1,4 +1,4 @@
-interface ServiceLocation {
+export interface ServiceLocation {
   name: string;
   address: string;
   coordinates: [number, number];
@@ -10,7 +10,7 @@ interface ServiceLocation {
   services?: string[];
 }
 
-interface SearchOptions {
+export interface SearchOptions {
   radius?: number; // in miles
   maxResults?: number;
   serviceType?: 'truck_repair' | 'truck_stop' | 'parts_store' | 'towing';

@@ -6,6 +6,14 @@ import L from 'leaflet';
 import { NominatimService, ServiceLocation } from '../../lib/maps/nominatim';
 import 'leaflet/dist/leaflet.css';
 
+// Extended ServiceLocation interface for map component
+interface ExtendedServiceLocation extends ServiceLocation {
+  lat: number;
+  lon: number;
+  display_name?: string;
+  serviceType?: string;
+}
+
 // Fix for default markers in Leaflet with Next.js
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -35,7 +43,8 @@ const serviceIcons = {
 interface ServiceMapProps {
   userLocation?: { lat: number; lng: number } | null;
   selectedServiceType?: string;
-  onServiceSelect?: (service: ServiceLocation) => void;
+  onServiceSelect?: (service: ExtendedServiceLocation) => void;
+  onServiceTypeChange?: (serviceType: string) => void;
   searchRadius?: number; // in miles
   className?: string;
 }
@@ -55,10 +64,11 @@ export function ServiceMap({
   userLocation, 
   selectedServiceType = 'truck_repair',
   onServiceSelect,
+  onServiceTypeChange,
   searchRadius = 50,
   className = "h-96 w-full rounded-lg"
 }: ServiceMapProps) {
-  const [services, setServices] = useState<ServiceLocation[]>([]);
+  const [services, setServices] = useState<ExtendedServiceLocation[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [mapCenter, setMapCenter] = useState<[number, number]>([39.8283, -98.5795]); // Center of US
@@ -103,10 +113,22 @@ export function ServiceMap({
         const foundServices = await nominatimService.findNearbyServices(
           currentLocation.lat,
           currentLocation.lng,
-          selectedServiceType,
-          searchRadius
+          {
+            serviceType: selectedServiceType as 'truck_repair' | 'truck_stop' | 'parts_store' | 'towing',
+            radius: typeof searchRadius === 'string' ? parseInt(searchRadius) : searchRadius,
+            maxResults: 20
+          }
         );
-        setServices(foundServices);
+        
+        // Преобразуем ServiceLocation в ExtendedServiceLocation
+        const extendedServices: ExtendedServiceLocation[] = foundServices.map(service => ({
+          ...service,
+          lat: service.coordinates[0],
+          lon: service.coordinates[1],
+          serviceType: selectedServiceType
+        }));
+        
+        setServices(extendedServices);
       } catch (err) {
         setError(err instanceof Error ? err.message : 'Failed to find services');
         setServices([]);
@@ -118,16 +140,16 @@ export function ServiceMap({
     searchForServices();
   }, [userLocation, selectedServiceType, searchRadius, mapCenter, nominatimService]);
 
-  const getServiceIcon = (service: ServiceLocation) => {
+  const getServiceIcon = (service: ExtendedServiceLocation) => {
     const serviceType = service.serviceType || 'default';
     return serviceIcons[serviceType as keyof typeof serviceIcons] || serviceIcons.default;
   };
 
-  const handleServiceClick = (service: ServiceLocation) => {
+  const handleServiceClick = (service: ExtendedServiceLocation) => {
     onServiceSelect?.(service);
   };
 
-  const getDirectionsUrl = (service: ServiceLocation) => {
+  const getDirectionsUrl = (service: ExtendedServiceLocation) => {
     const currentLocation = userLocation || { lat: mapCenter[0], lng: mapCenter[1] };
     return `https://www.google.com/maps/dir/${currentLocation.lat},${currentLocation.lng}/${service.lat},${service.lon}`;
   };
@@ -147,7 +169,7 @@ export function ServiceMap({
         <div className="text-sm font-medium text-gray-700">Service Type:</div>
         <select
           value={selectedServiceType}
-          onChange={(e) => onServiceSelect && onServiceSelect({ serviceType: e.target.value } as ServiceLocation)}
+          onChange={(e) => onServiceTypeChange?.(e.target.value)}
           className="text-xs border border-gray-300 rounded px-2 py-1"
         >
           <option value="truck_repair">🔧 Repair Shops</option>

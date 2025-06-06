@@ -9,8 +9,8 @@ const nextConfig = {
   },
   
   // Настройка для GitHub Pages (если деплоим в поддиректорию)
-  // basePath: process.env.NODE_ENV === 'production' ? '/truck-repair-assistant' : '',
-  // assetPrefix: process.env.NODE_ENV === 'production' ? '/truck-repair-assistant/' : '',
+  basePath: process.env.NODE_ENV === 'production' ? '/truck-repair-assistant' : '',
+  assetPrefix: process.env.NODE_ENV === 'production' ? '/truck-repair-assistant/' : '',
   
   // Отключаем trailing slash для совместимости с GitHub Pages
   trailingSlash: true,

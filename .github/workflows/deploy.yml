@@ -30,12 +30,16 @@ jobs:
       
     - name: Setup environment variables
       run: |
-        echo "NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL || 'https://yourusername.github.io/truck-repair-assistant' }}" >> $GITHUB_ENV
+        echo "NEXT_PUBLIC_APP_URL=${{ secrets.NEXT_PUBLIC_APP_URL || 'https://margarita215729.github.io/truck-repair-assistant' }}" >> $GITHUB_ENV
         echo "NEXT_PUBLIC_BASE_PATH=${{ secrets.NEXT_PUBLIC_BASE_PATH || '/truck-repair-assistant' }}" >> $GITHUB_ENV
         echo "NEXT_PUBLIC_NOMINATIM_URL=${{ secrets.NEXT_PUBLIC_NOMINATIM_URL || 'https://nominatim.openstreetmap.org' }}" >> $GITHUB_ENV
         
     - name: Build application
       run: npm run build
+      
+    # Добавим файл .nojekyll, чтобы отключить обработку Jekyll
+    - name: Create .nojekyll file
+      run: touch ./out/.nojekyll
       
     - name: Upload artifact
       uses: actions/upload-pages-artifact@v3

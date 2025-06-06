@@ -221,13 +221,13 @@ export class OfflineService {
   }
 
   static saveOfflineAction(action: any): void {
-    const actions = LocalStorageService.get('offline_actions') || [];
+    const actions = (LocalStorageService.get('offline_actions') as any[]) || [];
     actions.push({ ...action, timestamp: Date.now() });
     LocalStorageService.set('offline_actions', actions);
   }
 
   static getOfflineActions(): any[] {
-    return LocalStorageService.get('offline_actions') || [];
+    return (LocalStorageService.get('offline_actions') as any[]) || [];
   }
 
   static clearOfflineActions(): void {

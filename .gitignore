@@ -41,8 +41,10 @@ yarn-error.log*
 next-env.d.ts
 
 # Database
-data/
 postgres_data/
+data/*
+!data/trucks/
+!data/trucks/*
 
 # IDE
 .vscode/

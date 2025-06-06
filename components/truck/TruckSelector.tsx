@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TRUCK_MODELS, TruckModel, getAllMakes, getModelsByMake } from '../data/trucks/models';
+import { TRUCK_MODELS, TruckModel, getAllMakes, getModelsByMake } from '../../data/trucks/models';
 
 interface TruckSelectorProps {
   onTruckSelect: (truck: TruckModel & { year: number; engine: string }) => void;

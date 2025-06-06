@@ -1,4 +1,4 @@
-name: Deploy to GitHub Pages
+name: Deploy Next.js to GitHub Pages
 
 on:
   push:
@@ -34,27 +34,37 @@ jobs:
         echo "NEXT_PUBLIC_BASE_PATH=${{ secrets.NEXT_PUBLIC_BASE_PATH || '/truck-repair-assistant' }}" >> $GITHUB_ENV
         echo "NEXT_PUBLIC_NOMINATIM_URL=${{ secrets.NEXT_PUBLIC_NOMINATIM_URL || 'https://nominatim.openstreetmap.org' }}" >> $GITHUB_ENV
         
-    # Создаем директорию для скриптов, если она не существует
-    - name: Ensure scripts directory exists
-      run: mkdir -p scripts
-        
-    # Создаем скрипт подготовки файлов
-    - name: Create prepare-build script
+    # Ensure prepare-build script is executable
+    - name: Make prepare-build script executable
+      run: chmod +x scripts/prepare-build.sh
+      
+    # Debug: List data directory structure
+    - name: List data directory
       run: |
-        cat > scripts/prepare-build.sh << 'EOL'
-        #!/bin/bash
-        mkdir -p src/data/trucks
-        cp -r data/trucks/* src/data/trucks/ || echo "No model files to copy"
-        echo "Project files prepared for build!"
-        EOL
-        chmod +x scripts/prepare-build.sh
-    
-    # Запускаем скрипт подготовки файлов
-    - name: Run prepare-build script
-      run: ./scripts/prepare-build.sh
+        echo "Data directory contents:"
+        ls -la data/trucks/
         
-    - name: Build application
+    # Explicit run of prepare-build script
+    - name: Run prepare-build script explicitly
+      run: |
+        npm run prepare-build
+        echo "Checking prepare-build results:"
+        ls -la src/data/trucks/ || echo "Failed to find src/data/trucks/"
+        ls -la components/data/trucks/ || echo "Failed to find components/data/trucks/"
+        
+    # Build the application
+    - name: Build Next.js application
       run: npm run build
+    
+    # Debug: List output directories
+    - name: Check build output
+      run: |
+        echo "Output directories:"
+        ls -la out/
+        echo "Components data directory:"
+        ls -la components/data/trucks/ || echo "No components/data/trucks directory"
+        echo "Src data directory:"
+        ls -la src/data/trucks/ || echo "No src/data/trucks directory"
       
     # Добавим файл .nojekyll, чтобы отключить обработку Jekyll
     - name: Create .nojekyll file

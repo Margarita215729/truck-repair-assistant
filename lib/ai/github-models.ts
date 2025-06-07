@@ -1,44 +1,16 @@
-// GitHub Models integration with Azure OpenAI fallback for truck repair assistant
+/**
+ * GitHub Models Service
+ * 
+ * AI service with Azure OpenAI as primary provider and GitHub Models as fallback.
+ * Features:
+ * - Automatic fallback between providers
+ * - Truck diagnostic capabilities
+ * - Interactive chat support
+ * - Health monitoring for both services
+ * - Audio analysis support
+ */
 import { AzureOpenAIService } from './azure-openai';
-
-export interface TruckModel {
-  id: string;
-  make: string;
-  model: string;
-  year?: number;
-  years?: number[];
-  engine: string;
-}
-
-export interface DiagnosisRequest {
-  truck: TruckModel;
-  symptoms: string[];
-  additionalInfo?: string;
-  urgency?: 'low' | 'medium' | 'high';
-}
-
-export interface DiagnosisResult {
-  diagnosis: string;
-  confidence: number;
-  repairSteps: string[];
-  requiredTools: string[];
-  estimatedTime: string;
-  estimatedCost: string;
-  safetyWarnings: string[];
-  urgencyLevel: 'low' | 'medium' | 'high';
-}
-
-export interface ChatMessage {
-  role: 'user' | 'assistant' | 'system';
-  content: string;
-}
-
-export interface HealthStatus {
-  isHealthy: boolean;
-  service: 'github-models' | 'azure-openai';
-  latency?: number;
-  error?: string;
-}
+import type { TruckModel, DiagnosisRequest, DiagnosisResult, ChatMessage, HealthStatus } from './types';
 
 export class GitHubModelsService {
   private azureService: AzureOpenAIService;

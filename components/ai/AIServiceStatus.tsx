@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { enhancedAIService } from '../../lib/ai/enhanced-ai-service';
-import type { HealthStatus, AIServiceConfig } from '../../lib/ai/types';
+import { enhancedAIService } from '../../lib/ai';
+import type { HealthStatus, AIServiceConfig } from '../../lib/ai';
 
 interface AIServiceStatusProps {
   onProviderChange?: (provider: 'azure-openai' | 'github-models') => void;

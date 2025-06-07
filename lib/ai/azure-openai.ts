@@ -1,43 +1,22 @@
-// Azure OpenAI integration for truck repair assistant
+/**
+ * Azure OpenAI Service
+ * 
+ * Provides AI-powered truck diagnostic and chat capabilities using Azure OpenAI.
+ * Supports:
+ * - Truck issue diagnosis with structured responses
+ * - Interactive chat assistance
+ * - Streaming chat responses
+ * - Audio analysis (placeholder for future Azure Speech integration)
+ * - Health monitoring
+ */
 import { AzureOpenAI } from 'openai';
+import type { TruckModel, DiagnosisRequest, DiagnosisResult, ChatMessage } from './types';
 
 interface AzureOpenAIConfig {
   endpoint: string;
   apiKey: string;
   apiVersion: string;
   deploymentName: string;
-}
-
-interface TruckModel {
-  id: string;
-  make: string;
-  model: string;
-  year?: number;
-  years?: number[];
-  engine: string;
-}
-
-interface DiagnosisRequest {
-  truck: TruckModel;
-  symptoms: string[];
-  additionalInfo?: string;
-  urgency?: 'low' | 'medium' | 'high';
-}
-
-interface DiagnosisResult {
-  diagnosis: string;
-  confidence: number;
-  repairSteps: string[];
-  requiredTools: string[];
-  estimatedTime: string;
-  estimatedCost: string;
-  safetyWarnings: string[];
-  urgencyLevel: 'low' | 'medium' | 'high';
-}
-
-interface ChatMessage {
-  role: 'user' | 'assistant' | 'system';
-  content: string;
 }
 
 export class AzureOpenAIService {
@@ -246,6 +225,3 @@ Please provide a comprehensive diagnosis including:
 
 // Singleton instance
 export const azureOpenAIService = new AzureOpenAIService();
-
-// Export types
-export type { DiagnosisRequest, DiagnosisResult, ChatMessage, TruckModel };

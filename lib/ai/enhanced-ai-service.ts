@@ -1,4 +1,18 @@
-// Enhanced AI Service with comprehensive error handling and fallback mechanisms
+/**
+ * Enhanced AI Service
+ * 
+ * Advanced AI service with comprehensive error handling and fallback mechanisms.
+ * This is the recommended service to use in production applications.
+ * 
+ * Features:
+ * - Configurable primary/fallback providers
+ * - Automatic error handling and retry logic
+ * - Detailed logging and monitoring
+ * - Timeout protection
+ * - Comprehensive health checks
+ * - Streaming support with fallback
+ * - Utility methods for backward compatibility
+ */
 import { AzureOpenAIService } from './azure-openai';
 import type {
   TruckModel,
@@ -31,6 +45,11 @@ export class EnhancedAIService {
     };
   }
 
+  /**
+   * Diagnoses truck issues using AI with automatic fallback between providers
+   * @param request - Diagnosis request containing truck info, symptoms, and urgency
+   * @returns Promise with diagnosis result and provider information
+   */
   async diagnoseTruckIssue(request: DiagnosisRequest): Promise<FallbackResult<DiagnosisResult>> {
     const errors: AIServiceError[] = [];
     
@@ -89,6 +108,11 @@ export class EnhancedAIService {
     throw new Error(`All AI providers failed: ${errors.map(e => `${e.provider}: ${e.error.message}`).join(', ')}`);
   }
 
+  /**
+   * Chat with AI assistant using automatic fallback between providers
+   * @param messages - Array of chat messages
+   * @returns Promise with chat response and provider information
+   */
   async chat(messages: ChatMessage[]): Promise<FallbackResult<string>> {
     const errors: AIServiceError[] = [];
     
@@ -144,6 +168,11 @@ export class EnhancedAIService {
     throw new Error(`All chat providers failed: ${errors.map(e => `${e.provider}: ${e.error.message}`).join(', ')}`);
   }
 
+  /**
+   * Stream chat responses with real-time chunks
+   * @param messages - Array of chat messages
+   * @param onChunk - Callback function called for each response chunk
+   */
   async streamChat(messages: ChatMessage[], onChunk: StreamCallback): Promise<void> {
     try {
       console.log('🌊 Attempting streaming chat with Azure OpenAI...');
@@ -171,6 +200,10 @@ export class EnhancedAIService {
     }
   }
 
+  /**
+   * Check health status of all available AI providers
+   * @returns Promise with array of health status for each provider
+   */
   async checkHealth(): Promise<HealthStatus[]> {
     const healthChecks: HealthStatus[] = [];
     

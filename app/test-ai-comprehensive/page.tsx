@@ -1,9 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { enhancedAIService } from '@/lib/ai/enhanced-ai-service';
-import { aiService } from '@/lib/ai/github-models';
-import type { DiagnosisRequest, DiagnosisResult, HealthStatus, FallbackResult } from '@/lib/ai/types';
+import { enhancedAIService, aiService } from '@/lib/ai';
+import type { DiagnosisRequest, DiagnosisResult, HealthStatus, FallbackResult } from '@/lib/ai';
 
 interface TestResult {
   success: boolean;

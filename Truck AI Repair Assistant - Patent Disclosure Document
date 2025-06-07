@@ -2,7 +2,7 @@
 
 ## Executive Summary
 **Invention Title:** AI-Powered Audio Diagnostic System for Commercial Vehicle Maintenance  
-**Inventors:** [Ваше полное имя]  
+**Inventors:** Margarita Makeeva
 **Filing Date:** June 7, 2025  
 **Application Type:** Provisional Patent Equivalent  
 
@@ -37,7 +37,7 @@ User Input → Audio Capture → Frequency Analysis → AI Processing → Contex
 
 ## 1. Detailed Description
 
-### 1.1 Audio Diagnostic Engine (CORE INVENTION)
+### 1.1 Audio Diagnostic Engine
 
 **Technical Implementation:**
 ```typescript
@@ -234,14 +234,14 @@ I hereby declare that:
 - The technical details are accurate as of June 7, 2025
 - This disclosure represents the complete invention as currently implemented
 
-**Digital Signature:** [Your Name]  
+**Digital Signature:** Margarita Makeeva
 **Date:** June 7, 2025  
-**Location:** [Your Location]  
+**Location:** Philadelphia, PA, United States 
 **Witness:** Git commit hash and timestamp serve as independent verification
 
 ---
 
-**Repository URL:** https://github.com/[username]/TrackRepairAssistant-Patent  
-**Commit Hash:** [Will be generated upon first commit]  
+**Repository URL:** https://github.com/Margarita215729/truck-repair-assistant 
+**Commit Hash:** 3b3aff5ce79514fa48f3b7597e9d1c5d2119e645
 **Public Timestamp:** [GitHub commit timestamp]  
 **License:** Patent Pending - All Rights Reserved

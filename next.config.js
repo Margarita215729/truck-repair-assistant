@@ -12,7 +12,7 @@ const nextConfig = {
   basePath: process.env.NODE_ENV === 'production' ? '/truck-repair-assistant' : '',
   assetPrefix: process.env.NODE_ENV === 'production' ? '/truck-repair-assistant/' : '',
   
-  // Отключаем trailing slash для совместимости с GitHub Pages
+  // Включаем trailing slash для совместимости с GitHub Pages
   trailingSlash: true,
   
   // Временно отключаем ESLint для деплоя

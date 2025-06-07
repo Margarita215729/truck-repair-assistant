@@ -20,25 +20,32 @@ interface AzureOpenAIConfig {
 }
 
 export class AzureOpenAIService {
-  private client: AzureOpenAI;
+  private client: AzureOpenAI | null = null;
   private config: AzureOpenAIConfig;
 
   constructor() {
     this.config = {
-      endpoint: process.env.NEXT_PUBLIC_AZURE_OPENAI_ENDPOINT || 'https://makee-mbmcw6g5-swedencentral.cognitiveservices.azure.com/',
-      apiKey: process.env.NEXT_PUBLIC_AZURE_OPENAI_KEY!,
-      apiVersion: process.env.NEXT_PUBLIC_AZURE_OPENAI_API_VERSION || '2024-12-01-preview',
-      deploymentName: process.env.NEXT_PUBLIC_AZURE_OPENAI_DEPLOYMENT || 'gpt-4o'
+      endpoint: process.env.AZURE_OPENAI_ENDPOINT || 'https://makee-mbmcw6g5-swedencentral.cognitiveservices.azure.com/',
+      apiKey: process.env.AZURE_OPENAI_KEY!,
+      apiVersion: process.env.AZURE_OPENAI_API_VERSION || '2024-12-01-preview',
+      deploymentName: process.env.AZURE_OPENAI_DEPLOYMENT || 'gpt-4o'
     };
 
-    this.client = new AzureOpenAI({
-      apiVersion: this.config.apiVersion,
-      endpoint: this.config.endpoint,
-      apiKey: this.config.apiKey
-    });
+    // Only initialize client on server side
+    if (typeof window === 'undefined' && this.config.apiKey) {
+      this.client = new AzureOpenAI({
+        apiVersion: this.config.apiVersion,
+        endpoint: this.config.endpoint,
+        apiKey: this.config.apiKey
+      });
+    }
   }
 
   async diagnoseTruckIssue(request: DiagnosisRequest): Promise<DiagnosisResult> {
+    if (!this.client) {
+      throw new Error('Azure OpenAI client not initialized. This service must run on the server side.');
+    }
+
     const systemPrompt = `You are an expert truck mechanic with over 20 years of experience specializing in commercial vehicle diagnostics and repair. You have extensive knowledge of:
 
 - Heavy-duty diesel engines (Caterpillar, Cummins, Detroit Diesel, PACCAR, Volvo, Mack)
@@ -124,6 +131,10 @@ Please provide a comprehensive diagnosis including:
   }
 
   async chatWithAssistant(messages: ChatMessage[]): Promise<string> {
+    if (!this.client) {
+      throw new Error('Azure OpenAI client not initialized. This service must run on the server side.');
+    }
+
     const systemPrompt = `You are a professional truck repair assistant with expertise in heavy-duty vehicle maintenance and diagnostics. 
     Provide helpful, accurate, and safety-focused advice. Always recommend professional inspection for critical issues.`;
 
@@ -147,6 +158,10 @@ Please provide a comprehensive diagnosis including:
   }
 
   async streamChatResponse(messages: ChatMessage[]): Promise<AsyncIterable<string>> {
+    if (!this.client) {
+      throw new Error('Azure OpenAI client not initialized. This service must run on the server side.');
+    }
+
     const systemPrompt = `You are a professional truck repair assistant with expertise in heavy-duty vehicle maintenance and diagnostics. 
     Provide helpful, accurate, and safety-focused advice. Always recommend professional inspection for critical issues.`;
 
@@ -179,6 +194,10 @@ Please provide a comprehensive diagnosis including:
   }
 
   async analyzeEngineSound(audioBlob: Blob, truckInfo: TruckModel): Promise<string> {
+    if (!this.client) {
+      throw new Error('Azure OpenAI client not initialized. This service must run on the server side.');
+    }
+
     // For now, we'll convert audio to text using Azure Speech Services
     // This is a placeholder for future Azure Speech integration
     const description = await this.describeAudioIssue(audioBlob);
@@ -209,6 +228,10 @@ Please provide a comprehensive diagnosis including:
 
   // Health check method
   async healthCheck(): Promise<boolean> {
+    if (!this.client) {
+      return false;
+    }
+
     try {
       const response = await this.client.chat.completions.create({
         model: this.config.deploymentName,

@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { enhancedAIService, aiService } from '@/lib/ai';
-import type { DiagnosisRequest, DiagnosisResult, HealthStatus, FallbackResult } from '@/lib/ai';
+import { clientAIService } from '@/lib/ai';
+import type { DiagnosisRequest, DiagnosisResult, HealthStatus } from '@/lib/ai';
 
 interface TestResult {
   success: boolean;
@@ -67,8 +67,8 @@ const ComprehensiveAITestPage: React.FC = () => {
 
   const checkAllHealthStatus = async () => {
     await runTest('health-check', async () => {
-      const health = await enhancedAIService.checkHealth();
-      setHealthStatus(health);
+      const health = await clientAIService.checkHealth();
+      setHealthStatus([health]); // Wrap in array since clientAIService returns single status
       return health;
     });
   };
@@ -82,7 +82,7 @@ const ComprehensiveAITestPage: React.FC = () => {
     };
 
     await runTest('enhanced-diagnosis', async () => {
-      return await enhancedAIService.diagnoseTruckIssue(request);
+      return await clientAIService.diagnoseTruckIssue(request);
     });
   };
 
@@ -95,7 +95,7 @@ const ComprehensiveAITestPage: React.FC = () => {
     };
 
     await runTest('legacy-diagnosis', async () => {
-      return await aiService.diagnoseTruckIssue(request);
+      return await clientAIService.diagnoseTruckIssue(request);
     });
   };
 
@@ -105,7 +105,7 @@ const ComprehensiveAITestPage: React.FC = () => {
     ];
 
     await runTest('enhanced-chat', async () => {
-      return await enhancedAIService.chat(messages);
+      return await clientAIService.chatWithAssistant(messages);
     });
   };
 
@@ -117,44 +117,33 @@ const ComprehensiveAITestPage: React.FC = () => {
     ];
 
     await runTest('streaming-chat', async () => {
-      return new Promise<string>((resolve, reject) => {
-        let fullResponse = '';
-        
-        enhancedAIService.streamChat(messages, (chunk) => {
-          fullResponse += chunk;
-          setStreamingOutput(fullResponse);
-        }).then(() => {
-          resolve(fullResponse);
-        }).catch(reject);
-      });
+      try {
+        // Note: Streaming is not yet implemented in clientAIService
+        const response = await clientAIService.chatWithAssistant(messages);
+        setStreamingOutput(response);
+        return response;
+      } catch (error) {
+        throw new Error('Streaming not yet implemented for client-side service');
+      }
     });
   };
 
   const testConfigurationChanges = async () => {
     await runTest('config-changes', async () => {
-      // Test different configurations
-      const originalConfig = enhancedAIService.getConfig();
-      
-      // Test with GitHub Models as primary
-      enhancedAIService.setPrimaryProvider('github-models');
-      const configAfterChange = enhancedAIService.getConfig();
-      
-      // Restore original config
-      enhancedAIService.setPrimaryProvider(originalConfig.primaryProvider);
-      
+      // Configuration changes are not available in client service
+      // This would need to be implemented as server-side API endpoints
       return {
-        originalConfig,
-        configAfterChange,
-        restored: true
+        message: 'Configuration changes not available in client service',
+        availableEndpoints: ['/api/ai/diagnose', '/api/ai/chat', '/api/ai/health']
       };
     });
   };
 
   const testWithTimeout = async () => {
     await runTest('timeout-test', async () => {
-      // Set a very short timeout to test timeout handling
-      const originalTimeout = enhancedAIService.getConfig().timeout;
-      enhancedAIService.setTimeout(1); // 1ms timeout
+      // Timeout testing is handled by fetch API timeout in client service
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 1); // 1ms timeout
       
       try {
         const request: DiagnosisRequest = {
@@ -163,7 +152,14 @@ const ComprehensiveAITestPage: React.FC = () => {
           urgency: 'low'
         };
         
-        await enhancedAIService.diagnoseTruckIssue(request);
+        // This will likely timeout due to the 1ms limit
+        await fetch('/api/ai/diagnose', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(request),
+          signal: controller.signal
+        });
+        
         return { timeoutTriggered: false };
       } catch (error) {
         return { 
@@ -171,8 +167,7 @@ const ComprehensiveAITestPage: React.FC = () => {
           error: error instanceof Error ? error.message : 'Unknown error' 
         };
       } finally {
-        // Restore original timeout
-        enhancedAIService.setTimeout(originalTimeout);
+        clearTimeout(timeoutId);
       }
     });
   };
@@ -318,7 +313,16 @@ const ComprehensiveAITestPage: React.FC = () => {
           <h2 className="text-2xl font-semibold mb-4">⚙️ Current Configuration</h2>
           <div className="bg-gray-100 p-4 rounded-lg">
             <pre className="text-sm">
-              {JSON.stringify(enhancedAIService.getConfig(), null, 2)}
+              {JSON.stringify({
+                service: 'Client AI Service',
+                baseUrl: process.env.NODE_ENV === 'development' ? 'http://localhost:3000/api' : '/api',
+                availableEndpoints: [
+                  '/api/ai/diagnose',
+                  '/api/ai/chat', 
+                  '/api/ai/health'
+                ],
+                environment: process.env.NODE_ENV
+              }, null, 2)}
             </pre>
           </div>
         </div>

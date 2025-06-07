@@ -1,5 +1,7 @@
 import { Pool, PoolClient, QueryResult, QueryResultRow } from 'pg';
 import { Truck, MaintenanceRecord, ServiceLocation, DiagnosticSession, ChatConversation, ChatMessage } from '../types';
+import fs from 'fs';
+import path from 'path';
 
 interface DbRow {
   [key: string]: unknown;
@@ -214,6 +216,57 @@ class DatabaseService {
     } catch (error) {
       console.error('Database health check failed:', error);
       return false;
+    }
+  }
+
+  // Test and utility methods
+  async testConnection(): Promise<{ connected: boolean; error?: string; timestamp: Date }> {
+    try {
+      const result = await this.query('SELECT NOW() as timestamp');
+      return {
+        connected: true,
+        timestamp: new Date(result.rows[0].timestamp)
+      };
+    } catch (error) {
+      return {
+        connected: false,
+        error: error instanceof Error ? error.message : 'Unknown connection error',
+        timestamp: new Date()
+      };
+    }
+  }
+
+  async executeQuery<T extends QueryResultRow = QueryResultRow>(
+    text: string, 
+    params: unknown[] = []
+  ): Promise<QueryResult<T>> {
+    return this.query<T>(text, params);
+  }
+
+  // Initialize database schema
+  async initializeSchema(): Promise<{ success: boolean; message: string }> {
+    try {
+      const schemaPath = path.join(process.cwd(), 'database', 'init', '01-schema.sql');
+      
+      if (!fs.existsSync(schemaPath)) {
+        return {
+          success: false,
+          message: 'Schema file not found'
+        };
+      }
+
+      const schemaSQL = fs.readFileSync(schemaPath, 'utf-8');
+      await this.query(schemaSQL);
+      
+      return {
+        success: true,
+        message: 'Schema initialized successfully'
+      };
+    } catch (error) {
+      return {
+        success: false,
+        message: error instanceof Error ? error.message : 'Unknown error'
+      };
     }
   }
 

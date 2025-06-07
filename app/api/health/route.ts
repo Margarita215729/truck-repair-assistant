@@ -1,11 +1,13 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 
+// Явно указываем, что этот маршрут статический для совместимости с режимом export
+export const dynamic = 'force-static';
 export const runtime = 'edge';
 
-export async function GET(request: NextRequest) {
+export async function GET() {
   return NextResponse.json({
     status: 'ok',
-    timestamp: new Date().toISOString(),
+    timestamp: new Date().toISOString(), // Это будет время сборки, не реальное
     environment: process.env.NODE_ENV,
     version: '2.1.0',
     services: {

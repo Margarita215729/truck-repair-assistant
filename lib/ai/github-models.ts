@@ -1,7 +1,7 @@
 // GitHub Models integration with Azure OpenAI fallback for truck repair assistant
 import { AzureOpenAIService } from './azure-openai';
 
-interface TruckModel {
+export interface TruckModel {
   id: string;
   make: string;
   model: string;
@@ -10,14 +10,14 @@ interface TruckModel {
   engine: string;
 }
 
-interface DiagnosisRequest {
+export interface DiagnosisRequest {
   truck: TruckModel;
   symptoms: string[];
   additionalInfo?: string;
   urgency?: 'low' | 'medium' | 'high';
 }
 
-interface DiagnosisResult {
+export interface DiagnosisResult {
   diagnosis: string;
   confidence: number;
   repairSteps: string[];
@@ -28,12 +28,12 @@ interface DiagnosisResult {
   urgencyLevel: 'low' | 'medium' | 'high';
 }
 
-interface ChatMessage {
+export interface ChatMessage {
   role: 'user' | 'assistant' | 'system';
   content: string;
 }
 
-interface HealthStatus {
+export interface HealthStatus {
   isHealthy: boolean;
   service: 'github-models' | 'azure-openai';
   latency?: number;

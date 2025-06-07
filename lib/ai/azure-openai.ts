@@ -54,8 +54,8 @@ export class AzureOpenAIService {
 
     this.client = new AzureOpenAI({
       apiVersion: this.config.apiVersion,
-      azure_endpoint: this.config.endpoint,
-      api_key: this.config.apiKey
+      endpoint: this.config.endpoint,
+      apiKey: this.config.apiKey
     });
   }
 

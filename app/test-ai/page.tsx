@@ -3,7 +3,7 @@
 import React, { useState } from 'react';
 import { aiService } from '@/lib/ai/github-models';
 import { azureOpenAIService } from '@/lib/ai/azure-openai';
-import type { DiagnosisRequest, DiagnosisResult } from '@/lib/ai/github-models';
+import type { DiagnosisRequest, DiagnosisResult } from '@/lib/ai/types';
 
 const AITestPage: React.FC = () => {
   const [diagnosis, setDiagnosis] = useState<DiagnosisResult | null>(null);

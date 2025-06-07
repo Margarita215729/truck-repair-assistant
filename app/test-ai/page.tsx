@@ -1,7 +1,7 @@
 'use client';
 
 import React, { useState } from 'react';
-import { githubModelsService } from '@/lib/ai/github-models';
+import { aiService } from '@/lib/ai/github-models';
 import { azureOpenAIService } from '@/lib/ai/azure-openai';
 import type { DiagnosisRequest, DiagnosisResult } from '@/lib/ai/github-models';
 
@@ -32,7 +32,7 @@ const AITestPage: React.FC = () => {
     };
 
     try {
-      const result = await githubModelsService.diagnoseTruckIssue(request);
+      const result = await aiService.diagnoseTruckIssue(request);
       setDiagnosis(result);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error occurred');
@@ -44,8 +44,8 @@ const AITestPage: React.FC = () => {
   const handleHealthCheck = async () => {
     setLoading(true);
     try {
-      const health = await githubModelsService.healthCheck();
-      setHealthStatus(health);
+      const health = await aiService.checkHealth();
+      setHealthStatus({ azure: health.service === 'azure-openai', github: health.service === 'github-models' });
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Health check failed');
     } finally {

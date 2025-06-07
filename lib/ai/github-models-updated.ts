@@ -41,7 +41,7 @@ export class GitHubModelsService {
   constructor() {
     this.config = {
       endpoint: process.env.NEXT_PUBLIC_GITHUB_MODELS_ENDPOINT || 'https://models.github.ai/inference',
-      token: process.env.NEXT_PUBLIC_GITHUB_TOKEN!,
+      token: process.env.NEXT_PUBLIC_GITHUB_TOKEN,
       model: 'openai/gpt-4o-mini'
     };
   }

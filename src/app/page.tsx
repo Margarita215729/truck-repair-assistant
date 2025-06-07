@@ -5,7 +5,9 @@ import { TruckSelector } from '../../components/truck/TruckSelector';
 import { DiagnosisForm } from '../../components/diagnosis/DiagnosisForm';
 import { AudioRecorderWrapper } from '../../components/audio/AudioRecorderWrapper';
 import { AudioAnalysisDisplay } from '../../components/audio/AudioAnalysisDisplay';
-import { GitHubModelsService } from '../../lib/ai/github-models';
+import { AIServiceStatus } from '../../components/ai/AIServiceStatus';
+import { enhancedAIService } from '../../lib/ai/enhanced-ai-service';
+import type { FallbackResult, HealthStatus } from '../../lib/ai/types';
 import { localStorageService } from '../../lib/storage/local-storage';
 import { TruckModel } from '../../data/trucks/models';
 
@@ -62,8 +64,8 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<'diagnosis' | 'audio' | 'map'>('diagnosis');
   const [audioAnalysis, setAudioAnalysis] = useState<AudioAnalysis | null>(null);
-
-  const githubModels = new GitHubModelsService();
+  const [aiProviderUsed, setAiProviderUsed] = useState<'azure-openai' | 'github-models' | null>(null);
+  const [fallbackUsed, setFallbackUsed] = useState<boolean>(false);
 
   const handleTruckSelect = (truck: TruckModel & { year: number; engine: string }) => {
     setSelectedTruck(truck);
@@ -81,6 +83,7 @@ export default function Home() {
     setIsLoading(true);
     setError(null);
     setDiagnosisResult(null);
+    setAiProviderUsed(null);
 
     try {
       const enhancedRequest = {
@@ -88,19 +91,27 @@ export default function Home() {
         audioAnalysis: audioAnalysis
       };
 
-      const result = await githubModels.diagnoseTruckIssue(enhancedRequest);
-      setDiagnosisResult(result);
+      console.log('🚀 Starting AI diagnosis with enhanced service...');
+      const result: FallbackResult<DiagnosisResult> = await enhancedAIService.diagnoseTruckIssue(enhancedRequest);
+      
+      setDiagnosisResult(result.result);
+      setAiProviderUsed(result.provider);
+      setFallbackUsed(result.fallbackUsed);
+      
+      console.log(`✅ Diagnosis completed using ${result.provider}${result.fallbackUsed ? ' (fallback)' : ''}`);
 
       localStorageService.saveDiagnosisHistory({
         id: Date.now().toString(),
         truck: request.truck,
         symptoms: request.symptoms,
-        diagnosis: result.diagnosis,
+        diagnosis: result.result.diagnosis,
         timestamp: Date.now(),
         urgency: request.urgency
       });
     } catch (err) {
-      setError(err instanceof Error ? err.message : 'Failed to get diagnosis');
+      const errorMessage = err instanceof Error ? err.message : 'Failed to get diagnosis';
+      setError(errorMessage);
+      console.error('❌ Diagnosis failed:', errorMessage);
     } finally {
       setIsLoading(false);
     }
@@ -178,6 +189,15 @@ export default function Home() {
                 <h2 className="text-2xl font-bold text-gray-900 mb-6">
                   Diagnosis & Repair Assistant
                 </h2>
+
+                {/* AI Service Status Component */}
+                <AIServiceStatus 
+                  lastUsedProvider={aiProviderUsed}
+                  fallbackWasUsed={fallbackUsed}
+                  onProviderChange={(provider) => {
+                    console.log(`🔄 User switched to: ${provider}`);
+                  }}
+                />
                 
                 {/* Audio Analysis Preview */}
                 {audioAnalysis && (

@@ -265,5 +265,5 @@ Please provide a comprehensive diagnosis including:
 }
 
 // Export a singleton instance
-export const aiService = new GitHubModelsService();
-export default aiService;
+export const githubModelsService = new GitHubModelsService();
+export default githubModelsService;

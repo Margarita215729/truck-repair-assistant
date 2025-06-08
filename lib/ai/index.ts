@@ -27,6 +27,7 @@ export type {
 export { AzureOpenAIService, azureOpenAIService } from './azure-openai';
 export { EnhancedAIService, enhancedAIService } from './enhanced-ai-service';
 export { GitHubModelsService, githubModelsService } from './github-models';
+export { runAgentConversation } from './azure-agent';
 
 // Client-side safe wrapper
 export { ClientAIService, clientAIService } from './client-ai-service';

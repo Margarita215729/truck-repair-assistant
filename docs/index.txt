@@ -1,0 +1,25 @@
+1:"$Sreact.fragment"
+2:I[7555,[],""]
+3:I[1295,[],""]
+4:I[1024,["874","static/chunks/874-e0b9799315dd260f.js","345","static/chunks/app/not-found-46a86bb3fed8126b.js"],"default"]
+5:I[894,[],"ClientPageRoot"]
+6:I[239,["874","static/chunks/874-e0b9799315dd260f.js","974","static/chunks/app/page-afddf1ce4cc942b4.js"],"default"]
+9:I[9665,[],"MetadataBoundary"]
+b:I[9665,[],"OutletBoundary"]
+e:I[4911,[],"AsyncMetadataOutlet"]
+10:I[9665,[],"ViewportBoundary"]
+12:I[6614,[],""]
+:HL["/truck-repair-assistant/_next/static/media/569ce4b8f30dc480-s.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/truck-repair-assistant/_next/static/media/93f479601ee12b01-s.p.woff2","font",{"crossOrigin":"","type":"font/woff2"}]
+:HL["/truck-repair-assistant/_next/static/css/fa6ecf50dee25dc5.css","style"]
+0:{"P":null,"b":"9ecSvvXGDpdxPzuttQjoo","p":"/truck-repair-assistant","c":["",""],"i":false,"f":[[["",{"children":["__PAGE__",{}]},"$undefined","$undefined",true],["",["$","$1","c",{"children":[[["$","link","0",{"rel":"stylesheet","href":"/truck-repair-assistant/_next/static/css/fa6ecf50dee25dc5.css","precedence":"next","crossOrigin":"$undefined","nonce":"$undefined"}]],["$","html",null,{"lang":"en","children":["$","body",null,{"className":"__variable_453093 __variable_7b3f0f antialiased","children":["$","$L2",null,{"parallelRouterKey":"children","error":"$undefined","errorStyles":"$undefined","errorScripts":"$undefined","template":["$","$L3",null,{}],"templateStyles":"$undefined","templateScripts":"$undefined","notFound":[["$","$L4",null,{}],[]],"forbidden":"$undefined","unauthorized":"$undefined"}]}]}]]}],{"children":["__PAGE__",["$","$1","c",{"children":[["$","$L5",null,{"Component":"$6","searchParams":{},"params":{},"promises":["$@7","$@8"]}],["$","$L9",null,{"children":"$La"}],null,["$","$Lb",null,{"children":["$Lc","$Ld",["$","$Le",null,{"promise":"$@f"}]]}]]}],{},null,false]},null,false],["$","$1","h",{"children":[null,["$","$1","DpsHsV7XO3huKsaSM7OL3",{"children":[["$","$L10",null,{"children":"$L11"}],["$","meta",null,{"name":"next-size-adjust","content":""}]]}],null]}],false]],"m":"$undefined","G":["$12","$undefined"],"s":false,"S":true}
+13:"$Sreact.suspense"
+14:I[4911,[],"AsyncMetadata"]
+7:{}
+8:{}
+a:["$","$13",null,{"fallback":null,"children":["$","$L14",null,{"promise":"$@15"}]}]
+d:null
+11:[["$","meta","0",{"charSet":"utf-8"}],["$","meta","1",{"name":"viewport","content":"width=device-width, initial-scale=1"}]]
+c:null
+15:{"metadata":[["$","title","0",{"children":"Truck Repair Assistant | AI-Powered Truck Diagnostics"}],["$","meta","1",{"name":"description","content":"AI-powered truck diagnostics with GitHub Models, deployed on GitHub Pages. Get instant repair guidance for Peterbilt, Kenworth, Freightliner, and more."}],["$","meta","2",{"name":"author","content":"Truck Repair Assistant Team"}],["$","meta","3",{"name":"keywords","content":"truck repair, AI diagnostics, truck maintenance, Peterbilt, Kenworth, Freightliner"}]],"error":null,"digest":"$undefined"}
+f:{"metadata":"$15:metadata","error":null,"digest":"$undefined"}

@@ -27,12 +27,11 @@ export type {
 export { AzureOpenAIService, azureOpenAIService } from './azure-openai';
 export { EnhancedAIService, enhancedAIService } from './enhanced-ai-service';
 export { GitHubModelsService, githubModelsService } from './github-models';
-export { runAgentConversation } from './azure-agent';
 
 // Client-side safe wrapper
 export { ClientAIService, clientAIService } from './client-ai-service';
 
 // Environment-aware service selection
-export const aiService = typeof window === 'undefined' 
-  ? require('./enhanced-ai-service').enhancedAIService 
-  : require('./client-ai-service').clientAIService;
+export const aiService = typeof window === 'undefined'
+  ? (await import('./enhanced-ai-service')).enhancedAIService
+  : (await import('./client-ai-service')).clientAIService;

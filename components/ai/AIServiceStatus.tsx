@@ -77,29 +77,29 @@ export function AIServiceStatus({
   };
 
   return (
-    <div className="bg-gradient-to-r from-blue-50 to-indigo-50 border border-blue-200 rounded-lg p-4 mb-6">
-      <div className="flex items-center justify-between mb-4">
-        <h3 className="text-lg font-semibold text-blue-900 flex items-center">
-          🤖 AI Service Dashboard
+    <div className="bg-gradient-to-r from-blue-50 via-indigo-100 to-indigo-200 dark:from-gray-900 dark:via-blue-950 dark:to-blue-900 border border-blue-200 dark:border-blue-800 rounded-2xl p-6 mb-8 shadow-2xl backdrop-blur-md transition-all duration-500">
+      <div className="flex items-center justify-between mb-6">
+        <h3 className="text-2xl font-extrabold text-blue-900 dark:text-blue-200 flex items-center gap-2 animate-fade-in">
+          <span className="animate-bounce-slow">🤖</span> AI Service Dashboard
         </h3>
-        <div className="flex items-center space-x-2">
-          <label className="flex items-center text-sm text-blue-700">
+        <div className="flex items-center space-x-3">
+          <label className="flex items-center text-sm text-blue-700 dark:text-blue-200">
             <input
               type="checkbox"
               checked={autoCheck}
               onChange={(e) => setAutoCheck(e.target.checked)}
-              className="mr-2 rounded border-blue-300"
+              className="mr-2 rounded border-blue-300 dark:border-blue-700 focus:ring-blue-500"
             />
             Auto-check
           </label>
           <button
             onClick={checkHealth}
             disabled={isLoading}
-            className="px-3 py-1 bg-blue-600 text-white rounded-md hover:bg-blue-700 transition-colors text-sm disabled:opacity-50 flex items-center"
+            className="px-4 py-2 bg-gradient-to-r from-blue-600 to-indigo-600 text-white rounded-lg shadow hover:from-blue-700 hover:to-indigo-700 transition-all text-sm disabled:opacity-50 flex items-center font-semibold"
           >
             {isLoading ? (
               <>
-                <div className="animate-spin rounded-full h-3 w-3 border-b-2 border-white mr-1"></div>
+                <div className="animate-spin rounded-full h-4 w-4 border-b-2 border-white mr-2"></div>
                 Checking...
               </>
             ) : (

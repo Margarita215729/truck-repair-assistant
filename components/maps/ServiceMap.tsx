@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { MapContainer, TileLayer, Marker, Popup, useMap } from 'react-leaflet';
 import L from 'leaflet';
 import { NominatimService, ServiceLocation } from '../../lib/maps/nominatim';
@@ -15,6 +15,8 @@ interface ExtendedServiceLocation extends ServiceLocation {
 }
 
 // Fix for default markers in Leaflet with Next.js
+// Next.js/Leaflet compatibility workaround
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 delete (L.Icon.Default.prototype as any)._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -74,7 +76,9 @@ export function ServiceMap({
   const [mapCenter, setMapCenter] = useState<[number, number]>([39.8283, -98.5795]); // Center of US
   const [mapZoom, setMapZoom] = useState(4);
 
-  const nominatimService = new NominatimService();
+  // Memoize nominatimService to avoid useEffect dependency warning
+  const nominatimService = useMemo(() => new NominatimService(), []);
+
 
   // Get user location if not provided
   useEffect(() => {
@@ -121,7 +125,7 @@ export function ServiceMap({
         );
         
         // Преобразуем ServiceLocation в ExtendedServiceLocation
-        const extendedServices: ExtendedServiceLocation[] = foundServices.map(service => ({
+        const extendedServices: ExtendedServiceLocation[] = foundServices.map((service: ServiceLocation) => ({
           ...service,
           lat: service.coordinates[0],
           lon: service.coordinates[1],
@@ -164,8 +168,7 @@ export function ServiceMap({
 
   return (
     <div className="relative">
-      {/* Map Controls */}
-      <div className="absolute top-4 left-4 z-[1000] bg-white rounded-lg shadow-lg p-2 space-y-2">
+      <div className="absolute top-4 left-4 z-[1000] bg-gradient-to-br from-white via-blue-50 to-indigo-100 dark:from-gray-900 dark:via-blue-950 dark:to-blue-900 rounded-xl shadow-2xl backdrop-blur-md p-4 space-y-3 border border-blue-200 dark:border-blue-800 animate-fade-in">
         <div className="text-sm font-medium text-gray-700">Service Type:</div>
         <select
           value={selectedServiceType}
@@ -198,12 +201,10 @@ export function ServiceMap({
           Found: {services.length} services
         </div>
       </div>
-
-      {/* Map */}
       <MapContainer
         center={mapCenter}
         zoom={mapZoom}
-        className={className}
+        className={className + ' shadow-2xl border-2 border-blue-200 dark:border-blue-800 rounded-2xl transition-all duration-500'}
         style={{ height: '100%', width: '100%' }}
       >
         <MapUpdater center={mapCenter} zoom={mapZoom} />

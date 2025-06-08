@@ -56,25 +56,17 @@ export class ClientAIService {
     try {
       const response = await fetch(`${this.baseUrl}/ai/health`);
       const data = await response.json();
-      
       return {
-        service: data.service,
-        status: data.status === 'healthy' ? 'healthy' : 'unhealthy',
-        lastChecked: new Date(data.timestamp),
-        details: {
-          endpoint: data.endpoint,
-          deployment: data.deployment,
-          error: data.error
-        }
+        service: data.service || 'azure-openai',
+        isHealthy: data.status === 'healthy' || data.status === 'ok' || data.available === true,
+        latency: typeof data.latency === 'number' ? data.latency : undefined,
+        error: data.error || undefined
       };
     } catch (error) {
       return {
-        service: 'Azure OpenAI',
-        status: 'error',
-        lastChecked: new Date(),
-        details: {
-          error: error instanceof Error ? error.message : 'Health check failed'
-        }
+        service: 'azure-openai',
+        isHealthy: false,
+        error: error instanceof Error ? error.message : 'Health check failed'
       };
     }
   }

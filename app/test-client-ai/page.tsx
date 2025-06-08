@@ -67,10 +67,9 @@ const ClientAITestPage: React.FC = () => {
     } catch (error) {
       console.error('Health check failed:', error);
       setHealthStatus({
-        service: 'Azure OpenAI',
-        status: 'error',
-        lastChecked: new Date(),
-        details: { error: 'Health check failed' }
+        service: 'azure-openai',
+        isHealthy: false,
+        error: error instanceof Error ? error.message : 'Health check failed'
       });
     } finally {
       setLoading(null);
@@ -188,19 +187,15 @@ const ClientAITestPage: React.FC = () => {
           </h2>
           
           {healthStatus ? (
-            <div className={`p-4 rounded-lg border ${healthStatus.status === 'healthy' ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
+            <div className={`p-4 rounded-lg border ${healthStatus.isHealthy ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
               <h3 className="font-semibold">{healthStatus.service}</h3>
               <div className="text-sm text-gray-600">
-                <div>Status: {healthStatus.status === 'healthy' ? '✅ Healthy' : '❌ Unhealthy'}</div>
-                <div>Last Checked: {healthStatus.lastChecked.toLocaleString()}</div>
-                {healthStatus.details?.endpoint && (
-                  <div>Endpoint: {healthStatus.details.endpoint}</div>
+                <div>Status: {healthStatus.isHealthy ? '✅ Healthy' : '❌ Unhealthy'}</div>
+                {typeof healthStatus.latency === 'number' && (
+                  <div>Latency: {healthStatus.latency}ms</div>
                 )}
-                {healthStatus.details?.deployment && (
-                  <div>Deployment: {healthStatus.details.deployment}</div>
-                )}
-                {healthStatus.details?.error && (
-                  <div className="text-red-600">Error: {healthStatus.details.error}</div>
+                {healthStatus.error && (
+                  <div className="text-red-600">Error: {healthStatus.error}</div>
                 )}
               </div>
             </div>

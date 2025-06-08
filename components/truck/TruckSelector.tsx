@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { TRUCK_MODELS, TruckModel, getAllMakes, getModelsByMake } from '../../data/trucks/models';
+import { TruckModel, getAllMakes, getModelsByMake } from '../data/trucks/models';
 
 interface TruckSelectorProps {
   onTruckSelect: (truck: TruckModel & { year: number; engine: string }) => void;
@@ -51,12 +51,12 @@ export function TruckSelector({ onTruckSelect, selectedTruck }: TruckSelectorPro
   const isComplete = selectedMake && selectedModel && selectedYear && selectedEngine;
 
   return (
-    <div className="bg-white rounded-lg shadow-lg p-6 border-2 border-gray-200">
-      <h2 className="text-2xl font-bold text-gray-900 mb-6 flex items-center">
-        🚛 Select Your Truck
+    <div className="bg-gradient-to-br from-green-50 via-blue-50 to-blue-100 dark:from-gray-900 dark:via-blue-950 dark:to-blue-900 rounded-2xl shadow-2xl border-2 border-gray-200 dark:border-blue-900 p-8 backdrop-blur-md transition-all duration-500">
+      <h2 className="text-3xl font-extrabold text-gray-900 dark:text-blue-100 mb-8 flex items-center gap-2 animate-fade-in">
+        <span className="animate-truck-bounce">🚛</span> Select Your Truck
       </h2>
       
-      <div className="space-y-4">
+      <div className="space-y-6">
         {/* Make Selection */}
         <div>
           <label className="block text-sm font-bold text-gray-900 mb-2">

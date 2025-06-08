@@ -54,9 +54,9 @@ export function AudioAnalysisDisplay({ analysis, className = "" }: AudioAnalysis
   const frequencyAnalysis = getFrequencyAnalysis();
 
   return (
-    <div className={`bg-white rounded-lg shadow-lg p-6 ${className}`}>
-      <h3 className="text-xl font-semibold text-gray-800 mb-6 flex items-center">
-        📊 Audio Analysis Results
+    <div className={`bg-gradient-to-br from-white via-blue-50 to-green-100 dark:from-gray-900 dark:via-blue-950 dark:to-green-900 rounded-2xl shadow-2xl p-8 backdrop-blur-md transition-all duration-500 ${className}`}>
+      <h3 className="text-2xl font-extrabold text-gray-800 dark:text-blue-100 mb-8 flex items-center gap-2 animate-fade-in">
+        <span className="animate-wave">📊</span> Audio Analysis Results
       </h3>
 
       <div className="space-y-6">

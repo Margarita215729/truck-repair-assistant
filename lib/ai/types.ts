@@ -33,13 +33,13 @@ export interface ChatMessage {
 
 export interface HealthStatus {
   isHealthy: boolean;
-  service: 'github-models' | 'azure-openai';
+  service: 'github-models' | 'azure-openai' | 'azure-ai-foundry';
   latency?: number;
   error?: string;
 }
 
 export interface AIServiceConfig {
-  primaryProvider: 'azure-openai' | 'github-models';
+  primaryProvider: 'azure-openai' | 'github-models' | 'azure-ai-foundry';
   fallbackEnabled: boolean;
   timeout: number;
 }
@@ -69,14 +69,14 @@ export type StreamCallback = (chunk: string) => void;
 
 // Error types
 export interface AIServiceError {
-  provider: 'azure-openai' | 'github-models';
+  provider: 'azure-openai' | 'github-models' | 'azure-ai-foundry';
   error: Error;
   context?: string;
 }
 
 export interface FallbackResult<T> {
   result: T;
-  provider: 'azure-openai' | 'github-models';
+  provider: 'azure-openai' | 'github-models' | 'azure-ai-foundry';
   fallbackUsed: boolean;
   errors?: AIServiceError[];
 }

@@ -1,0 +1,106 @@
+{
+  "name": "Truck Repair Assistant",
+  "short_name": "TruckAI",
+  "description": "AI-powered truck diagnostics and repair assistance for professional drivers",
+  "start_url": "/truck-repair-assistant/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#1f2937",
+  "orientation": "portrait-primary",
+  "scope": "/truck-repair-assistant/",
+  "categories": ["productivity", "business"],
+  "lang": "en-US",
+  "dir": "ltr",
+  "icons": [
+    {
+      "src": "/truck-repair-assistant/icons/icon-72x72.png",
+      "sizes": "72x72",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/truck-repair-assistant/icons/icon-96x96.png",
+      "sizes": "96x96",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/truck-repair-assistant/icons/icon-128x128.png",
+      "sizes": "128x128",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/truck-repair-assistant/icons/icon-144x144.png",
+      "sizes": "144x144",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/truck-repair-assistant/icons/icon-152x152.png",
+      "sizes": "152x152",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/truck-repair-assistant/icons/icon-192x192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/truck-repair-assistant/icons/icon-384x384.png",
+      "sizes": "384x384",
+      "type": "image/png",
+      "purpose": "maskable any"
+    },
+    {
+      "src": "/truck-repair-assistant/icons/icon-512x512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable any"
+    }
+  ],
+  "screenshots": [
+    {
+      "src": "/truck-repair-assistant/screenshots/mobile-1.png",
+      "sizes": "390x844",
+      "type": "image/png",
+      "form_factor": "narrow",
+      "label": "Truck diagnosis interface"
+    },
+    {
+      "src": "/truck-repair-assistant/screenshots/desktop-1.png",
+      "sizes": "1920x1080",
+      "type": "image/png",
+      "form_factor": "wide",
+      "label": "Service locator map"
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Quick Diagnosis",
+      "short_name": "Diagnose",
+      "description": "Start audio diagnosis immediately",
+      "url": "/truck-repair-assistant/?quick=diagnosis",
+      "icons": [
+        {
+          "src": "/truck-repair-assistant/icons/diagnosis-shortcut.png",
+          "sizes": "96x96"
+        }
+      ]
+    },
+    {
+      "name": "Find Service",
+      "short_name": "Service",
+      "description": "Locate nearby truck service centers",
+      "url": "/truck-repair-assistant/?quick=service",
+      "icons": [
+        {
+          "src": "/truck-repair-assistant/icons/service-shortcut.png",
+          "sizes": "96x96"
+        }
+      ]
+    }
+  ]
+}

@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { clientAIService } from '@/lib/ai';
-import type { DiagnosisRequest, DiagnosisResult, HealthStatus } from '@/lib/ai';
+import { clientAIService } from '@/lib/ai/client-ai-service';
+import type { DiagnosisRequest, DiagnosisResult, HealthStatus } from '@/lib/ai/types';
 
 interface TestResult {
   success: boolean;

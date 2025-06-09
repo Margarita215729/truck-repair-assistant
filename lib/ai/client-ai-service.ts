@@ -81,6 +81,38 @@ export class ClientAIService {
     // This would need to be implemented with file upload to server
     throw new Error('Audio analysis not yet implemented for client-side service');
   }
+
+  /**
+   * Chat using Azure AI Foundry agent (client-side wrapper)
+   * @param message - User message to send to the agent
+   * @returns Promise with agent conversation response
+   */
+  async chatWithFoundryAgent(message: string): Promise<Array<{ role: string; text: string }>> {
+    const response = await fetch(`${this.baseUrl}/ai/foundry`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ message }),
+    });
+
+    if (!response.ok) {
+      const error = await response.json();
+      throw new Error(error.error || 'Failed to chat with Azure AI Foundry agent');
+    }
+
+    const data = await response.json();
+    return data.conversation;
+  }
+
+  /**
+   * Get Azure AI Foundry configuration status
+   */
+  async getFoundryStatus() {
+    const response = await fetch(`${this.baseUrl}/ai/foundry`);
+    const data = await response.json();
+    return data;
+  }
 }
 
 // Client-side singleton

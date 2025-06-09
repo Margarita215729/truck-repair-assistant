@@ -14,6 +14,7 @@
  * - Utility methods for backward compatibility
  */
 import { AzureOpenAIService } from './azure-openai';
+import { runAgentConversation } from './azure-agent';
 import type {
   TruckModel,
   DiagnosisRequest,
@@ -75,6 +76,50 @@ export class EnhancedAIService {
         };
         errors.push(aiError);
         console.warn('⚠️ Azure OpenAI failed:', aiError.error.message);
+      }
+    } else if (this.config.primaryProvider === 'azure-ai-foundry') {
+      try {
+        console.log('🔍 Attempting diagnosis with Azure AI Foundry (primary)...');
+        const result = await this.withTimeout(
+          this.diagnoseWithAzureAIFoundry(request),
+          this.config.timeout
+        );
+        console.log('✅ Azure AI Foundry diagnosis successful');
+        return {
+          result,
+          provider: 'azure-ai-foundry',
+          fallbackUsed: false
+        };
+      } catch (error) {
+        const aiError: AIServiceError = {
+          provider: 'azure-ai-foundry',
+          error: error instanceof Error ? error : new Error(String(error)),
+          context: 'Primary diagnosis attempt'
+        };
+        errors.push(aiError);
+        console.warn('⚠️ Azure AI Foundry failed:', aiError.error.message);
+      }
+    } else if (this.config.primaryProvider === 'github-models') {
+      try {
+        console.log('🔍 Attempting diagnosis with GitHub Models (primary)...');
+        const result = await this.withTimeout(
+          this.diagnoseWithGitHubModels(request),
+          this.config.timeout
+        );
+        console.log('✅ GitHub Models diagnosis successful');
+        return {
+          result,
+          provider: 'github-models',
+          fallbackUsed: false
+        };
+      } catch (error) {
+        const aiError: AIServiceError = {
+          provider: 'github-models',
+          error: error instanceof Error ? error : new Error(String(error)),
+          context: 'Primary diagnosis attempt'
+        };
+        errors.push(aiError);
+        console.warn('⚠️ GitHub Models failed:', aiError.error.message);
       }
     }
 
@@ -380,6 +425,87 @@ Please provide a comprehensive diagnosis including:
     }
   }
 
+  private async diagnoseWithAzureAIFoundry(request: DiagnosisRequest): Promise<DiagnosisResult> {
+    if (!this.isAzureFoundryAvailable()) {
+      throw new Error('Azure AI Foundry not configured. Missing environment variables: AZURE_PROJECTS_ENDPOINT, AZURE_AGENT_ID, AZURE_THREAD_ID');
+    }
+
+    // Construct the diagnostic message for the agent
+    const diagnosticMessage = `TRUCK DIAGNOSTIC REQUEST:
+
+TRUCK INFORMATION:
+- Make: ${request.truck.make}
+- Model: ${request.truck.model}
+- Year: ${request.truck.year || (request.truck.years ? request.truck.years[request.truck.years.length - 1] : 'Unknown')}
+- Engine: ${request.truck.engine}
+
+REPORTED SYMPTOMS:
+${request.symptoms.map((symptom, index) => `${index + 1}. ${symptom}`).join('\n')}
+
+${request.additionalInfo ? `ADDITIONAL INFORMATION:\n${request.additionalInfo}\n` : ''}
+
+URGENCY LEVEL: ${request.urgency || 'medium'}
+
+Please provide a comprehensive truck diagnosis in JSON format with the following structure:
+{
+  "diagnosis": "detailed diagnosis description",
+  "confidence": number (1-10),
+  "repairSteps": ["step 1", "step 2", "step 3"],
+  "requiredTools": ["tool 1", "tool 2"],
+  "estimatedTime": "time estimate",
+  "estimatedCost": "cost range",
+  "safetyWarnings": ["warning 1", "warning 2"],
+  "urgencyLevel": "low | medium | high"
+}`;
+
+    try {
+      const conversation = await runAgentConversation(diagnosticMessage);
+      
+      // Extract the response from the conversation
+      const agentResponse = conversation.find(msg => msg.role === 'assistant')?.text;
+      
+      if (!agentResponse) {
+        throw new Error('No response from Azure AI Foundry agent');
+      }
+
+      // Try to parse JSON response
+      try {
+        // Look for JSON in the response
+        const jsonMatch = agentResponse.match(/\{[\s\S]*\}/);
+        if (jsonMatch) {
+          return JSON.parse(jsonMatch[0]);
+        }
+        
+        // Fallback: Create structured response from agent text
+        return {
+          diagnosis: agentResponse,
+          confidence: 8,
+          repairSteps: ['Consult with a qualified mechanic for detailed diagnosis and repair'],
+          requiredTools: ['Professional diagnostic tools'],
+          estimatedTime: '1-3 hours for diagnosis',
+          estimatedCost: '$200-800',
+          safetyWarnings: ['Always follow proper safety procedures', 'Consult professional mechanic for critical issues'],
+          urgencyLevel: request.urgency || 'medium'
+        };
+      } catch (parseError) {
+        console.warn('Failed to parse Azure AI Foundry JSON response, using fallback format');
+        return {
+          diagnosis: agentResponse,
+          confidence: 7,
+          repairSteps: ['Consult with a qualified mechanic for detailed diagnosis'],
+          requiredTools: ['Professional diagnostic tools'],
+          estimatedTime: '1-3 hours',
+          estimatedCost: '$200-800',
+          safetyWarnings: ['Always follow proper safety procedures'],
+          urgencyLevel: request.urgency || 'medium'
+        };
+      }
+    } catch (error) {
+      console.error('Azure AI Foundry diagnosis failed:', error);
+      throw new Error(`Azure AI Foundry diagnosis failed: ${error instanceof Error ? error.message : String(error)}`);
+    }
+  }
+
   // Utility methods for backward compatibility
   async generateResponse(messages: ChatMessage[]): Promise<string> {
     const result = await this.chat(messages);
@@ -399,7 +525,7 @@ Please provide a comprehensive diagnosis including:
   }
 
   // Configuration methods
-  setPrimaryProvider(provider: 'azure-openai' | 'github-models'): void {
+  setPrimaryProvider(provider: 'azure-openai' | 'github-models' | 'azure-ai-foundry'): void {
     this.config.primaryProvider = provider;
   }
 
@@ -413,6 +539,60 @@ Please provide a comprehensive diagnosis including:
 
   getConfig(): AIServiceConfig {
     return { ...this.config };
+  }
+
+  /**
+   * Check if Azure AI Foundry is configured and available
+   * @returns boolean indicating if Azure AI Foundry is available
+   */
+  isAzureFoundryAvailable(): boolean {
+    return !!(
+      process.env.AZURE_PROJECTS_ENDPOINT && 
+      process.env.AZURE_AGENT_ID && 
+      process.env.AZURE_THREAD_ID
+    );
+  }
+
+  /**
+   * Chat using Azure AI Foundry agent
+   * @param message - User message to send to the agent
+   * @returns Promise with agent conversation response
+   */
+  async chatWithFoundryAgent(message: string): Promise<FallbackResult<Array<{ role: string; text: string }>>> {
+    if (!this.isAzureFoundryAvailable()) {
+      throw new Error('Azure AI Foundry not configured. Missing environment variables: AZURE_PROJECTS_ENDPOINT, AZURE_AGENT_ID, AZURE_THREAD_ID');
+    }
+
+    try {
+      console.log('🤖 Using Azure AI Foundry agent...');
+      const conversation = await this.withTimeout(
+        runAgentConversation(message),
+        this.config.timeout
+      );
+      console.log('✅ Azure AI Foundry agent conversation successful');
+      
+      return {
+        result: conversation,
+        provider: 'azure-ai-foundry',
+        fallbackUsed: false
+      };
+    } catch (error) {
+      console.error('❌ Azure AI Foundry agent failed:', error);
+      throw error;
+    }
+  }
+
+  /**
+   * Get Azure AI Foundry configuration status
+   * @returns Object with configuration details
+   */
+  getFoundryStatus() {
+    return {
+      available: this.isAzureFoundryAvailable(),
+      endpoint: process.env.AZURE_PROJECTS_ENDPOINT ? '***configured***' : 'missing',
+      agentId: process.env.AZURE_AGENT_ID ? '***configured***' : 'missing',
+      threadId: process.env.AZURE_THREAD_ID ? '***configured***' : 'missing'
+    };
   }
 }
 

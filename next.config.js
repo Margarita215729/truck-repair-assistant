@@ -1,23 +1,92 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Статический экспорт для GitHub Pages
+  // Production build with static export
   output: 'export',
   
-  // Отключаем оптимизацию изображений для статического экспорта
+  // Disable image optimization for static export
   images: {
     unoptimized: true
   },
   
-  // Настройка для GitHub Pages (если деплоим в поддиректорию)
+  // GitHub Pages configuration
   basePath: process.env.NODE_ENV === 'production' ? '/truck-repair-assistant' : '',
   assetPrefix: process.env.NODE_ENV === 'production' ? '/truck-repair-assistant/' : '',
   
-  // Включаем trailing slash для совместимости с GitHub Pages
+  // Enable trailing slash for GitHub Pages compatibility
   trailingSlash: true,
   
-  // Временно отключаем ESLint для деплоя
+  // ESLint configuration
   eslint: {
     ignoreDuringBuilds: true,
+  },
+  
+  // TypeScript configuration
+  typescript: {
+    ignoreBuildErrors: false,
+  },
+  
+  // Production optimizations
+  compiler: {
+    removeConsole: process.env.NODE_ENV === 'production',
+  },
+  
+  // Webpack configuration to handle Node.js modules in browser
+  webpack: (config, { isServer }) => {
+    if (!isServer) {
+      config.resolve.fallback = {
+        ...config.resolve.fallback,
+        fs: false,
+        net: false,
+        tls: false,
+        crypto: false,
+        stream: false,
+        url: false,
+        zlib: false,
+        http: false,
+        https: false,
+        assert: false,
+        os: false,
+        path: false,
+        // Additional Node.js modules used by Azure AI Projects SDK
+        http2: false,
+        dns: false,
+        dgram: false,
+        cluster: false,
+        readline: false,
+        repl: false,
+        inspector: false,
+        worker_threads: false,
+        perf_hooks: false,
+        async_hooks: false,
+        trace_events: false,
+        v8: false,
+        constants: false,
+        module: false,
+        domain: false,
+        timers: false,
+        string_decoder: false,
+        util: false,
+        querystring: false,
+        punycode: false,
+        child_process: false,
+        vm: false,
+        buffer: require.resolve('buffer/'),
+        process: require.resolve('process/browser'),
+        events: require.resolve('events/'),
+      };
+    }
+    
+    // Ignore Azure telemetry modules that cause issues
+    config.externals = config.externals || [];
+    config.externals.push({
+      '@opentelemetry/api': 'commonjs @opentelemetry/api',
+      '@opentelemetry/instrumentation': 'commonjs @opentelemetry/instrumentation',
+      '@opentelemetry/otlp-grpc-exporter-base': 'commonjs @opentelemetry/otlp-grpc-exporter-base',
+      '@opentelemetry/exporter-trace-otlp-grpc': 'commonjs @opentelemetry/exporter-trace-otlp-grpc',
+      '@grpc/grpc-js': 'commonjs @grpc/grpc-js',
+    });
+    
+    return config;
   },
   
   // Экспериментальные фичи

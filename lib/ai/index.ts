@@ -32,6 +32,10 @@ export { GitHubModelsService, githubModelsService } from './github-models';
 export { ClientAIService, clientAIService } from './client-ai-service';
 
 // Environment-aware service selection
-export const aiService = typeof window === 'undefined'
-  ? (await import('./enhanced-ai-service')).enhancedAIService
-  : (await import('./client-ai-service')).clientAIService;
+export const getAIService = async () => {
+  if (typeof window === 'undefined') {
+    return (await import('./enhanced-ai-service')).enhancedAIService;
+  } else {
+    return (await import('./client-ai-service')).clientAIService;
+  }
+};

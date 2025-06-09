@@ -1,8 +1,8 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { clientAIService } from '@/lib/ai';
-import type { DiagnosisRequest, DiagnosisResult, HealthStatus } from '@/lib/ai';
+import { clientAIService } from '@/lib/ai/client-ai-service';
+import type { DiagnosisRequest, DiagnosisResult, HealthStatus } from '@/lib/ai/types';
 
 interface TestResult {
   success: boolean;
@@ -18,6 +18,9 @@ const ComprehensiveAITestPage: React.FC = () => {
   const [loading, setLoading] = useState<string | null>(null);
   const [healthStatus, setHealthStatus] = useState<HealthStatus[]>([]);
   const [streamingOutput, setStreamingOutput] = useState<string>('');
+  // Add Azure AI Foundry specific state
+  const [foundryStatus, setFoundryStatus] = useState<any>(null);
+  const [foundryConversation, setFoundryConversation] = useState<Array<{ role: string; text: string }>>([]);
 
   const testTruck = {
     id: 'test-truck',
@@ -69,6 +72,15 @@ const ComprehensiveAITestPage: React.FC = () => {
     await runTest('health-check', async () => {
       const health = await clientAIService.checkHealth();
       setHealthStatus([health]); // Wrap in array since clientAIService returns single status
+      
+      // Also check Azure AI Foundry status
+      try {
+        const foundryStatus = await clientAIService.getFoundryStatus();
+        setFoundryStatus(foundryStatus);
+      } catch (error) {
+        console.warn('Failed to get Foundry status:', error);
+      }
+      
       return health;
     });
   };
@@ -172,6 +184,27 @@ const ComprehensiveAITestPage: React.FC = () => {
     });
   };
 
+  const testAzureFoundryAgent = async () => {
+    await runTest('azure-foundry-agent', async () => {
+      const testMessage = 'Diagnose a Caterpillar C15 engine with low power and black smoke. What should I check first?';
+      const response = await clientAIService.chatWithFoundryAgent(testMessage);
+      setFoundryConversation(response);
+      return {
+        conversation: response,
+        messageCount: response.length,
+        provider: 'azure-ai-foundry'
+      };
+    });
+  };
+
+  const testFoundryConfiguration = async () => {
+    await runTest('foundry-config', async () => {
+      const status = await clientAIService.getFoundryStatus();
+      setFoundryStatus(status);
+      return status;
+    });
+  };
+
   const renderTestResult = (testName: string, result?: TestResult) => {
     if (!result) return null;
 
@@ -218,7 +251,7 @@ const ComprehensiveAITestPage: React.FC = () => {
             </button>
           </h2>
           
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {healthStatus.map((status) => (
               <div key={status.service} className={`p-4 rounded-lg border ${status.isHealthy ? 'bg-green-50 border-green-200' : 'bg-red-50 border-red-200'}`}>
                 <h3 className="font-semibold capitalize">{status.service.replace('-', ' ')}</h3>
@@ -229,6 +262,20 @@ const ComprehensiveAITestPage: React.FC = () => {
                 </div>
               </div>
             ))}
+            
+            {/* Azure AI Foundry Status */}
+            {foundryStatus && (
+              <div className={`p-4 rounded-lg border ${foundryStatus.configured ? 'bg-green-50 border-green-200' : 'bg-yellow-50 border-yellow-200'}`}>
+                <h3 className="font-semibold">🤖 Azure AI Foundry</h3>
+                <div className="text-sm text-gray-600">
+                  <div>Status: {foundryStatus.configured ? '✅ Configured' : '⚠️ Not Configured'}</div>
+                  <div>Endpoint: {foundryStatus.endpoint !== 'missing' ? '✅ Set' : '❌ Missing'}</div>
+                  <div>Agent ID: {foundryStatus.agentId !== 'missing' ? '✅ Set' : '❌ Missing'}</div>
+                  <div>Thread ID: {foundryStatus.threadId !== 'missing' ? '✅ Set' : '❌ Missing'}</div>
+                  {foundryStatus.status && <div className="mt-1 text-xs">{foundryStatus.status}</div>}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -269,6 +316,22 @@ const ComprehensiveAITestPage: React.FC = () => {
             </button>
             
             <button
+              onClick={testAzureFoundryAgent}
+              disabled={loading === 'azure-foundry-agent'}
+              className="bg-cyan-600 text-white px-4 py-2 rounded-md hover:bg-cyan-700 disabled:opacity-50"
+            >
+              {loading === 'azure-foundry-agent' ? 'Testing...' : 'Foundry Agent'}
+            </button>
+            
+            <button
+              onClick={testFoundryConfiguration}
+              disabled={loading === 'foundry-config'}
+              className="bg-teal-600 text-white px-4 py-2 rounded-md hover:bg-teal-700 disabled:opacity-50"
+            >
+              {loading === 'foundry-config' ? 'Testing...' : 'Foundry Config'}
+            </button>
+            
+            <button
               onClick={testConfigurationChanges}
               disabled={loading === 'config-changes'}
               className="bg-indigo-600 text-white px-4 py-2 rounded-md hover:bg-indigo-700 disabled:opacity-50"
@@ -296,6 +359,32 @@ const ComprehensiveAITestPage: React.FC = () => {
           </div>
         )}
 
+        {/* Azure AI Foundry Conversation */}
+        {foundryConversation.length > 0 && (
+          <div className="bg-white p-6 rounded-lg shadow-md mb-6">
+            <h2 className="text-2xl font-semibold mb-4">🤖 Azure AI Foundry Conversation</h2>
+            <div className="bg-gray-50 p-4 rounded-lg max-h-64 overflow-y-auto">
+              <div className="space-y-3">
+                {foundryConversation.map((msg, index) => (
+                  <div
+                    key={index}
+                    className={`p-3 rounded-lg ${
+                      msg.role === 'user' 
+                        ? 'bg-blue-100 ml-8' 
+                        : 'bg-white mr-8 shadow-sm'
+                    }`}
+                  >
+                    <div className="font-medium text-sm text-gray-600 mb-1">
+                      {msg.role === 'user' ? '👤 User' : '🤖 Agent'}
+                    </div>
+                    <div className="text-gray-900 text-sm">{msg.text}</div>
+                  </div>
+                ))}
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Test Results */}
         <div className="bg-white p-6 rounded-lg shadow-md">
           <h2 className="text-2xl font-semibold mb-4">📊 Test Results</h2>
@@ -319,13 +408,31 @@ const ComprehensiveAITestPage: React.FC = () => {
                 availableEndpoints: [
                   '/api/ai/diagnose',
                   '/api/ai/chat', 
-                  '/api/ai/health'
+                  '/api/ai/health',
+                  '/api/ai/foundry'
                 ],
                 environment: process.env.NODE_ENV
               }, null, 2)}
             </pre>
           </div>
         </div>
+
+        {/* Azure AI Foundry Status */}
+        {foundryStatus && (
+          <div className="bg-white p-6 rounded-lg shadow-md mt-6">
+            <h2 className="text-2xl font-semibold mb-4">🔍 Azure AI Foundry Status</h2>
+            <div className="text-sm text-gray-600 space-y-2">
+              <div>Service: Azure AI Foundry</div>
+              <div>Status: {foundryStatus.isHealthy ? '✅ Healthy' : '❌ Unhealthy'}</div>
+              {foundryStatus.latency && <div>Latency: {foundryStatus.latency}ms</div>}
+              {foundryStatus.error && (
+                <div className="text-red-600">
+                  Error: {foundryStatus.error}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

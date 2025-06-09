@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { enhancedAIService } from '@/lib/ai/enhanced-ai-service';
 
-export const dynamic = "force-static";
+// Remove static export for Vercel deployment
+// export const dynamic = "force-static";
 
 export async function GET() {
   try {

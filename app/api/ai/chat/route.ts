@@ -2,7 +2,8 @@ import { NextRequest, NextResponse } from 'next/server';
 import { enhancedAIService } from '@/lib/ai/enhanced-ai-service';
 import type { ChatMessage } from '@/lib/ai/types';
 
-export const dynamic = "force-static";
+// Remove static export for Vercel deployment
+// export const dynamic = "force-static";
 
 export async function POST(request: NextRequest) {
   try {

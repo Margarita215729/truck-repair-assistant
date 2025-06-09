@@ -1,19 +1,20 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  // Production build with static export
-  output: 'export',
+  // Vercel deployment - no static export needed
+  // output: 'export', // Commented out for Vercel
   
-  // Disable image optimization for static export
+  // Keep image optimization enabled for Vercel
   images: {
-    unoptimized: true
+    domains: ['dtnacontent-dtna.prd.freightliner.com', 'successleasing.com'],
+    formats: ['image/webp', 'image/avif'],
   },
   
-  // GitHub Pages configuration
-  basePath: process.env.NODE_ENV === 'production' ? '/truck-repair-assistant' : '',
-  assetPrefix: process.env.NODE_ENV === 'production' ? '/truck-repair-assistant/' : '',
+  // No basePath needed for Vercel deployment
+  // basePath: process.env.NODE_ENV === 'production' ? '/truck-repair-assistant' : '',
+  // assetPrefix: process.env.NODE_ENV === 'production' ? '/truck-repair-assistant/' : '',
   
-  // Enable trailing slash for GitHub Pages compatibility
-  trailingSlash: true,
+  // Optional trailing slash for compatibility
+  trailingSlash: false,
   
   // ESLint configuration
   eslint: {

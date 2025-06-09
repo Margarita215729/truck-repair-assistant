@@ -10,9 +10,13 @@
     "lint": "next lint",
     "export": "next build",
     "deploy": "gh-pages -d out",
+    "deploy:vercel": "vercel --prod",
+    "preview:vercel": "vercel",
     "db:up": "docker-compose up -d postgres",
     "db:down": "docker-compose down",
-    "db:reset": "docker-compose down -v && docker-compose up -d postgres"
+    "db:reset": "docker-compose down -v && docker-compose up -d postgres",
+    "db:generate": "prisma generate",
+    "db:migrate": "prisma db push"
   },
   "dependencies": {
     "@azure/ai-projects": "^1.0.0-beta.8",

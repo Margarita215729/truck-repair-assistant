@@ -1,7 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { runAgentConversation } from '@/lib/ai/azure-agent';
 
-export const dynamic = "force-static";
+// Remove static export for Vercel deployment
+// export const dynamic = "force-static";
 
 export async function POST(request: NextRequest) {
   try {

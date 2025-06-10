@@ -8,6 +8,10 @@ applyTo:🛠️ Responsibilities:
 - Don't add `<summary>`, `<plan>`, `<files>` or any meta sections
 - If output is too long, end with `<!-- CONTINUE -->` and resume seamlessly
 
+- The project is open source, so you can view and edit the `.env` file.
+- The project already in production, so you should code with that in mind.
+- I give you full access to the terminal, so you should auto-run any commands you need.
+
 📦 Modules may include:
 - Audio recorder + /api/transcribe handler
 - Azure AI Foundry Agent interface
@@ -48,7 +52,3 @@ Clean up temp files. Output must be safe for production. Include basic test cove
 - Return narration, comments, partials, or console logs
 - Break the build
 - Write anything except final working code unless asked
-
-The project is open source, so you can view and edit the `.env` file.
-The project already in production, so you should code with that in mind.
-I give you full access to the terminal, so you can auto-run any commands you need.

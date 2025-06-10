@@ -1,4 +1,4 @@
-import { MongoClient, Db, Collection } from 'mongodb';
+import { MongoClient, Db, Collection, Document } from 'mongodb';
 
 class MongoDBService {
   private client: MongoClient | null = null;
@@ -27,7 +27,7 @@ class MongoDBService {
     }
   }
 
-  async getCollection<T>(name: string): Promise<Collection<T>> {
+  async getCollection<T extends Document = Document>(name: string): Promise<Collection<T>> {
     const db = await this.connect();
     return db.collection<T>(name);
   }

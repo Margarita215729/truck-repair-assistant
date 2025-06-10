@@ -1,37 +1,40 @@
 'use client';
 
 import React, { useState, useEffect } from 'react';
-import { enhancedAIService } from '../../lib/ai';
-import type { HealthStatus, AIServiceConfig } from '../../lib/ai';
+import type { HealthStatus } from '../../lib/ai';
 
 interface AIServiceStatusProps {
-  onProviderChange?: (provider: 'azure-openai' | 'github-models') => void;
-  lastUsedProvider?: 'azure-openai' | 'github-models' | null;
+  lastUsedProvider?: 'azure-ai-foundry' | 'azure-openai' | 'github-models' | null;
   fallbackWasUsed?: boolean;
 }
 
 export function AIServiceStatus({ 
-  onProviderChange, 
   lastUsedProvider, 
   fallbackWasUsed 
 }: AIServiceStatusProps) {
   const [healthStatus, setHealthStatus] = useState<HealthStatus[]>([]);
   const [isLoading, setIsLoading] = useState(false);
-  const [config, setConfig] = useState<AIServiceConfig>();
   const [autoCheck, setAutoCheck] = useState(false);
 
   useEffect(() => {
-    // Get current configuration
-    setConfig(enhancedAIService.getConfig());
+    // Check configuration on component mount
+    checkHealth();
   }, []);
 
   const checkHealth = async () => {
     setIsLoading(true);
     try {
       console.log('🔍 Checking AI service health...');
-      const health = await enhancedAIService.checkHealth();
-      setHealthStatus(health);
-      console.log('✅ Health check completed:', health);
+      const response = await fetch('/api/ai/health');
+      const data = await response.json();
+      
+      if (data.success) {
+        setHealthStatus(data.providers);
+        console.log('✅ Health check completed:', data.providers);
+      } else {
+        console.error('❌ Health check failed:', data.error);
+        setHealthStatus([]);
+      }
     } catch (err) {
       console.error('❌ Health check failed:', err);
       setHealthStatus([]);
@@ -45,29 +48,15 @@ export function AIServiceStatus({
       const interval = setInterval(checkHealth, 30000); // Check every 30 seconds
       return () => clearInterval(interval);
     }
-  }, [autoCheck, checkHealth]);
-
-  const togglePrimaryProvider = () => {
-    if (!config) return;
-    
-    const newProvider = config.primaryProvider === 'azure-openai' ? 'github-models' : 'azure-openai';
-    enhancedAIService.setPrimaryProvider(newProvider);
-    setConfig(enhancedAIService.getConfig());
-    onProviderChange?.(newProvider);
-    console.log(`🔄 Switched primary provider to: ${newProvider}`);
-  };
-
-  const toggleFallback = () => {
-    if (!config) return;
-    
-    const newFallbackEnabled = !config.fallbackEnabled;
-    enhancedAIService.setFallbackEnabled(newFallbackEnabled);
-    setConfig(enhancedAIService.getConfig());
-    console.log(`🔄 Fallback ${newFallbackEnabled ? 'enabled' : 'disabled'}`);
-  };
+  }, [autoCheck]);
 
   const getServiceIcon = (service: string) => {
-    return service === 'azure-openai' ? '🌐' : '🐙';
+    switch (service) {
+      case 'azure-ai-foundry': return '🏗️';
+      case 'azure-openai': return '🌐';
+      case 'github-models': return '🐙';
+      default: return '🤖';
+    }
   };
 
   const getHealthColor = (isHealthy: boolean) => {
@@ -109,41 +98,6 @@ export function AIServiceStatus({
         </div>
       </div>
 
-      {/* Configuration Controls */}
-      {config && (
-        <div className="mb-4 p-3 bg-white rounded-md border border-blue-200">
-          <h4 className="font-medium text-blue-900 mb-2">Configuration</h4>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-3 text-sm">
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700">Primary Provider:</span>
-              <button
-                onClick={togglePrimaryProvider}
-                className="px-2 py-1 bg-blue-100 text-blue-800 rounded capitalize hover:bg-blue-200 transition-colors"
-              >
-                {config.primaryProvider === 'azure-openai' ? '🌐 Azure OpenAI' : '🐙 GitHub Models'}
-              </button>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700">Fallback:</span>
-              <button
-                onClick={toggleFallback}
-                className={`px-2 py-1 rounded transition-colors ${
-                  config.fallbackEnabled 
-                    ? 'bg-green-100 text-green-800 hover:bg-green-200' 
-                    : 'bg-gray-100 text-gray-800 hover:bg-gray-200'
-                }`}
-              >
-                {config.fallbackEnabled ? '✅ Enabled' : '❌ Disabled'}
-              </button>
-            </div>
-            <div className="flex items-center justify-between">
-              <span className="text-gray-700">Timeout:</span>
-              <span className="text-blue-800 font-medium">{config.timeout / 1000}s</span>
-            </div>
-          </div>
-        </div>
-      )}
-
       {/* Health Status */}
       {healthStatus.length > 0 ? (
         <div className="grid grid-cols-1 md:grid-cols-2 gap-3 mb-4">
@@ -155,7 +109,9 @@ export function AIServiceStatus({
               <div className="flex items-center justify-between mb-1">
                 <span className="font-medium flex items-center">
                   {getServiceIcon(status.service)} {' '}
-                  {status.service === 'azure-openai' ? 'Azure OpenAI' : 'GitHub Models'}
+                  {status.service === 'azure-ai-foundry' ? 'Azure AI Foundry' : 
+                   status.service === 'azure-openai' ? 'Azure OpenAI' : 
+                   status.service === 'github-models' ? 'GitHub Models' : status.service}
                 </span>
                 <span className="text-sm font-medium">
                   {status.isHealthy ? '✅ Online' : '❌ Offline'}
@@ -188,7 +144,9 @@ export function AIServiceStatus({
             <div className="flex items-center">
               <span className="font-medium text-blue-800 flex items-center">
                 {getServiceIcon(lastUsedProvider)} {' '}
-                {lastUsedProvider === 'azure-openai' ? 'Azure OpenAI' : 'GitHub Models'}
+                {lastUsedProvider === 'azure-ai-foundry' ? 'Azure AI Foundry' :
+                 lastUsedProvider === 'azure-openai' ? 'Azure OpenAI' : 
+                 lastUsedProvider === 'github-models' ? 'GitHub Models' : lastUsedProvider}
               </span>
               {fallbackWasUsed && (
                 <span className="ml-2 px-2 py-1 bg-orange-100 text-orange-800 rounded-full text-xs font-medium">

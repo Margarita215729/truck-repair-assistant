@@ -1,4 +1,4 @@
-import { NextRequest, NextResponse } from 'next/server';
+import { NextResponse } from 'next/server';
 import { enhancedAIService } from '@/lib/ai/enhanced-ai-service';
 
 // Remove static export for Vercel deployment
@@ -14,7 +14,7 @@ export async function GET() {
     
     // Determine overall health
     const isHealthy = healthChecks.some(check => check.isHealthy);
-    const primaryService = healthChecks.find(check => check.service === 'azure-openai');
+    const primaryService = healthChecks.find(check => check.service === 'azure-ai-foundry');
     
     return NextResponse.json({
       service: 'Enhanced AI Service',
@@ -22,7 +22,7 @@ export async function GET() {
       latency,
       providers: healthChecks,
       primary: {
-        service: 'azure-openai',
+        service: 'azure-ai-foundry',
         isHealthy: primaryService?.isHealthy || false,
         error: primaryService?.error
       },

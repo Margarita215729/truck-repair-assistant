@@ -3,7 +3,7 @@
 ## 📋 Project Overview
 
 **Name:** Truck Repair Assistant
-**Type:** Web application with GitHub Pages deployment
+**Type:** Web application with Vercel deployment
 **Target Audience:** Truck drivers in USA
 **Main Goal:** AI-powered assistant for truck diagnosis and repair
 
@@ -17,7 +17,7 @@
 ### 2. Multimodal Assistance
 - YouTube video tutorials (embedded)
 - Digital repair manuals
-- AI engineer powered by GitHub Models (GPT-4o)
+- AI engineer powered by Azure AI Foundry Agent
 
 ### 3. AI Diagnosis
 - Training on real breakdown data
@@ -39,130 +39,119 @@
 
 ### Frontend (Web)
 ```
-Next.js with Static Export
+Next.js 15 with App Router
 ├── UI Components (Tailwind CSS + Radix UI)
 ├── State Management (Zustand)
 ├── PWA capabilities
 ├── Responsive design
-└── Static hosting on GitHub Pages
+└── Deployment on Vercel
 ```
 
 ### Backend & Database
 ```
 Simplified Architecture
-├── Docker PostgreSQL (development)
-├── Azure Database for PostgreSQL (production)
+├── MongoDB Atlas (production)
 ├── Static JSON files in repository
-├── GitHub repository for file storage
-└── No traditional backend API routes
+├── API Routes on Vercel
+└── Azure AI Foundry Agent
 ```
 
 ### AI/ML Components
 ```
-├── GitHub Models API integration (GPT-4o)
+├── Azure AI Foundry Agent (primary)
+├── Azure OpenAI (fallback)
 ├── Audio analysis (Web Audio API)
-├── GitHub Models Whisper for audio
+├── Whisper for audio transcription
 └── Local storage for user data
 ```
 
 ### Database
 ```
-├── Docker PostgreSQL (development)
-├── Azure Database for PostgreSQL (production)
+├── MongoDB Atlas (production)
 ├── Static JSON files (truck models, parts)
-├── Local storage (user preferences)
-└── GitHub repository (static assets)
+└── Local storage (user preferences)
 ```
 
 ## 📱 Technical Specification
 
-### Phase 1: MVP Web Version (2-3 months)
+### Phase 1: MVP Web Version
 
-#### Month 1: Foundation
-**Week 1-2:**
-- Infrastructure setup (GitHub Pages, Docker)
+#### 1: Foundation
+- Infrastructure setup (Vercel, MongoDB Atlas)
 - Basic Frontend architecture creation
 - Design system and UI Kit
-- Database setup with Docker
+- Database setup with MongoDB Atlas
 
-**Week 3-4:**
 - Truck model selection module
-- Basic AI chat with GitHub Models
+- Basic AI chat with Azure AI Foundry Agent
 - Theme system (light/dark)
 - Responsive design
 
-#### Month 2: Key Features
-**Week 1-2:**
+#### 2: Key Features
 - YouTube API integration (embedded videos)
 - Manual system (static PDF files)
 - Basic AI diagnostics
 - Audio recording and analysis
 
-**Week 3-4:**
 - Service map (OpenStreetMap + Nominatim)
 - Checklist system
 - Symptom search
 - Mobile adaptation
 
-#### Month 3: Polish
-**Week 1-2:**
+#### 3: Polish
 - Simplified parts lookup (JSON data)
 - Enhanced AI diagnostics
 - Performance optimization
 - Offline functionality
 
-**Week 3-4:**
 - Testing and bug fixes
 - SEO optimization
 - Simple analytics integration
 - Launch preparation
 
-### Phase 2: Enhanced Features (1-2 months)
+### Phase 2: Enhanced Features
 - Improved sound recognition
 - Solution rating system
 - Enhanced parts integration
 - Multi-language support
 
-### Phase 3: Mobile Application (2-3 months)
+### Phase 3: Mobile Application
 - Progressive Web App improvements
 - Native camera integration
-- Push notifications (if applicable)
 - Enhanced offline mode
 
 ## 🛠️ Technology Stack (Updated)
 
 ### Frontend
-- **Framework**: Next.js 14 with Static Export
+- **Framework**: Next.js 15 with App Router
 - **Language**: TypeScript
 - **Styling**: Tailwind CSS with custom design system
-- **UI Components**: Radix UI primitives
+- **UI Components**: Radix UI primitives (shadcn/ui)
 - **State Management**: Zustand for client state
 - **Audio**: Web Audio API for recording and analysis
 
 ### Backend & Database
-- **Database**: Docker PostgreSQL (development) / Azure Database for PostgreSQL (production)
-- **Static Hosting**: GitHub Pages with static export
-- **File Storage**: GitHub repository for static assets
-- **Authentication**: GitHub OAuth (optional for user features)
+- **Database**: MongoDB Atlas (production)
+- **Deployment**: Vercel
+- **File Storage**: Static JSON files in repository
 
 ### AI & APIs
-- **AI Model**: GitHub Models API (GPT-4o integration)
-- **Audio Processing**: Web Speech API + GitHub Models Whisper
-- **Maps**: OpenStreetMap with Nominatim API (free alternative)
-- **Parts Data**: Simplified JSON files in repository
-- **Video Content**: Embedded YouTube videos or repository-hosted content
+- **AI Model**: Azure AI Foundry Agent (primary)
+- **Fallback**: Azure OpenAI (GPT-4o)
+- **Audio Processing**: Web Audio API + Whisper (Azure)
+- **Maps**: OpenStreetMap with Nominatim API
+- **Parts and Truck Models Data**: Static JSON files in repository
+- **Video Content**: Embedded YouTube videos
 
 ### Deployment
-- **Platform**: GitHub Pages (Static hosting)
-- **CI/CD**: GitHub Actions for automated deployment
-- **CDN**: GitHub Pages CDN
-- **Environment**: GitHub repository branches (main, staging, development)
+- **Platform**: Vercel
+- **Database**: MongoDB Atlas
 
 ### DevOps
-- **Hosting**: GitHub Pages (Frontend)
-- **CI/CD**: GitHub Actions
-- **Monitoring**: Simple analytics + error tracking
-- **Database**: Docker (local) + Azure Database (production)
+- **Hosting**: Vercel
+- **CI/CD**: Vercel Git Integration
+- **Monitoring**: Vercel Analytics + error tracking
+- **Database**: MongoDB Atlas
 
 ## 💰 Estimated Development Cost
 
@@ -170,12 +159,6 @@ Simplified Architecture
 - **Full-stack developer**: $80-120k/year
 - **UI/UX designer**: $60-90k/year
 - **Part-time consultant**: $40-60k/year
-
-### Infrastructure (monthly):
-- **Hosting**: $0 (GitHub Pages free)
-- **GitHub Models API**: $100-500 (depending on usage)
-- **Azure Database**: $20-100 (development tier)
-- **Domain**: $12/year
 
 ### One-time expenses:
 - **Design system**: $3-7k (simplified)
@@ -203,8 +186,8 @@ Simplified Architecture
 
 ### Technical KPIs:
 - Page load time < 2s
-- Static site performance score > 95
-- 99.9% uptime (GitHub Pages)
+- Vercel performance score > 95
+- 99.9% uptime (Vercel SLA)
 - Mobile Core Web Vitals score > 90
 
 ### Business KPIs:
@@ -216,7 +199,7 @@ Simplified Architecture
 ## 🔒 Security and Compliance
 
 ### Phase 1 (MVP):
-- HTTPS everywhere (GitHub Pages default)
+- HTTPS everywhere
 - Input validation
 - Client-side rate limiting
 - Basic data encryption in local storage
@@ -240,26 +223,6 @@ Simplified Architecture
 - Machine learning optimization
 - International expansion
 - Enterprise features
-
-## 🔄 Migration Benefits
-
-### Cost Reduction:
-- **Hosting**: $300/month → $0 (GitHub Pages)
-- **AI API**: $500-2000/month → $100-500/month (GitHub Models)
-- **Maps API**: $200-500/month → $0 (OpenStreetMap)
-- **Total savings**: ~$1000-2800/month
-
-### Simplified Development:
-- No backend server management
-- Simplified deployment process
-- Reduced infrastructure complexity
-- Easier maintenance and updates
-
-### Enhanced Performance:
-- Static site generation
-- CDN delivery worldwide
-- Faster load times
-- Better SEO
 
 ---
 

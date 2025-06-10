@@ -14,8 +14,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Truck Repair Assistant | AI-Powered Truck Diagnostics",
-  description: "AI-powered truck diagnostics with GitHub Models, deployed on GitHub Pages. Get instant repair guidance for Peterbilt, Kenworth, Freightliner, and more.",
-  keywords: "truck repair, AI diagnostics, truck maintenance, Peterbilt, Kenworth, Freightliner",
+  description: "AI-powered truck diagnostics with Azure AI Foundry Agent, deployed on Vercel. Get instant repair guidance for Peterbilt, Kenworth, Freightliner, and more.",
+  keywords: "truck repair, AI diagnostics, truck maintenance, Peterbilt, Kenworth, Freightliner, Azure AI",
   authors: [{ name: "Truck Repair Assistant Team" }],
 };
 

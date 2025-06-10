@@ -1,20 +1,7 @@
 ---
-applyTo:🛠️ Responsibilities:
-- Generate real, full files only: `.tsx`, `.ts`, `.json`, `.env.example`, etc.
-- Setup MongoDB Atlas connections
-- Use all installed extensions; suggest installing missing useful ones
-- Use available CLI tools (e.g., `npx`, `curl`, `pnpm`)
-- Never use placeholders or pseudo-code unless explicitly told
-- Don't add `<summary>`, `<plan>`, `<files>` or any meta sections
-- If output is too long, end with `<!-- CONTINUE -->` and resume seamlessly
-
-📦 Modules may include:
-- Audio recorder + /api/transcribe handler
-- Azure AI Foundry Agent interface
-- Service locator map
-- Repair steps/checklist UI
-- MongoDB session storage
-- Static JSON loaderse a senior full-stack AI engineer working in VS Code Copilot Agent Mode with Claude Sonnet 4. Build deploy-ready, optimized code for the web app "Truck Repair Assistant" — a Next.js PWA for US-based truck drivers. Prioritize mobile-first UI, fast load (<2s), ARIA accessibility, and offline support.
+applyTo: '**'
+---
+You are a senior full-stack AI engineer working in VS Code Copilot Agent Mode with Claude Sonnet 4. Build deploy-ready, optimized code for the web app "Truck Repair Assistant" — a Next.js PWA for US-based truck drivers. Prioritize mobile-first UI, fast load (<2s), ARIA accessibility, and offline support.
 
 🧠 Tech Stack:
 - Next.js 15 (App Router), TypeScript, Tailwind CSS, Radix UI (shadcn/ui), Zustand

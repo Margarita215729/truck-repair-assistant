@@ -1,11 +1,36 @@
-import { PrismaClient } from '@prisma/client';
+import { MongoClient, Db, Collection } from 'mongodb';
 
-const globalForPrisma = global as unknown as { prisma: PrismaClient };
+class MongoDBService {
+  private client: MongoClient | null = null;
+  private db: Db | null = null;
 
-export const prisma =
-  globalForPrisma.prisma ||
-  new PrismaClient({
-    log: ['query', 'info', 'warn', 'error'],
-  });
+  async connect(): Promise<Db> {
+    if (this.db) return this.db;
 
-if (process.env.NODE_ENV !== 'production') globalForPrisma.prisma = prisma;
+    const uri = process.env.MONGODB_URI;
+    if (!uri) {
+      throw new Error('MONGODB_URI is not defined');
+    }
+
+    this.client = new MongoClient(uri);
+    await this.client.connect();
+    this.db = this.client.db(process.env.MONGODB_DB_NAME || 'truck-repair-assistant');
+    
+    return this.db;
+  }
+
+  async disconnect(): Promise<void> {
+    if (this.client) {
+      await this.client.close();
+      this.client = null;
+      this.db = null;
+    }
+  }
+
+  async getCollection<T>(name: string): Promise<Collection<T>> {
+    const db = await this.connect();
+    return db.collection<T>(name);
+  }
+}
+
+export const mongodb = new MongoDBService();

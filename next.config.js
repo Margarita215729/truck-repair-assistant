@@ -84,6 +84,7 @@ const nextConfig = {
       '@opentelemetry/instrumentation': 'commonjs @opentelemetry/instrumentation',
       '@opentelemetry/otlp-grpc-exporter-base': 'commonjs @opentelemetry/otlp-grpc-exporter-base',
       '@opentelemetry/exporter-trace-otlp-grpc': 'commonjs @opentelemetry/exporter-trace-otlp-grpc',
+      '@opentelemetry/context-async-hooks': 'commonjs @opentelemetry/context-async-hooks',
       '@grpc/grpc-js': 'commonjs @grpc/grpc-js',
     });
     

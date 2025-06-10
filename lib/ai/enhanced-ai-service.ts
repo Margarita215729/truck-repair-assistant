@@ -5,7 +5,9 @@
  * This is the recommended service to use in production applications.
  * 
  * Features:
- * - Configurable primary/fallback providers
+ * - Azure AI Foundry Agent as primary provider
+ * - Azure OpenAI as secondary fallback
+ * - GitHub Models as tertiary fallback
  * - Automatic error handling and retry logic
  * - Detailed logging and monitoring
  * - Timeout protection
@@ -15,6 +17,7 @@
  */
 import { AzureOpenAIService } from './azure-openai';
 import { runAgentConversation } from './azure-agent';
+import { GitHubModelsService } from './github-models';
 import type {
   TruckModel,
   DiagnosisRequest,
@@ -29,17 +32,19 @@ import type {
 
 export class EnhancedAIService {
   private azureService: AzureOpenAIService;
+  private githubService: GitHubModelsService;
   private githubToken: string;
   private githubEndpoint: string;
   private config: AIServiceConfig;
 
   constructor(config?: Partial<AIServiceConfig>) {
     this.azureService = new AzureOpenAIService();
+    this.githubService = new GitHubModelsService();
     this.githubToken = process.env.NEXT_PUBLIC_GITHUB_TOKEN || '';
     this.githubEndpoint = 'https://models.inference.ai.azure.com';
     
     this.config = {
-      primaryProvider: 'azure-openai',
+      primaryProvider: 'azure-ai-foundry', // Updated to use Azure AI Foundry as primary
       fallbackEnabled: true,
       timeout: 30000,
       ...config
@@ -487,7 +492,7 @@ Please provide a comprehensive truck diagnosis in JSON format with the following
           safetyWarnings: ['Always follow proper safety procedures', 'Consult professional mechanic for critical issues'],
           urgencyLevel: request.urgency || 'medium'
         };
-      } catch (parseError) {
+      } catch {
         console.warn('Failed to parse Azure AI Foundry JSON response, using fallback format');
         return {
           diagnosis: agentResponse,

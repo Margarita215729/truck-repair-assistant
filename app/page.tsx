@@ -31,14 +31,12 @@ export default function Home() {
     setDiagnosisResult(null);
     try {
       setDiagnosisResult({
-        diagnosis: 'AI diagnosis result will appear here.',
-        confidence: 0.85,
-        repairSteps: ['Check engine oil', 'Inspect turbocharger'],
-        requiredTools: ['Wrench', 'Diagnostic scanner'],
-        estimatedTime: '1-2 hours',
-        estimatedCost: '$200-500',
-        safetyWarnings: ['Allow engine to cool before inspection'],
+        possibleCauses: ['Engine oil level low', 'Turbocharger malfunction'],
+        recommendations: ['Check engine oil', 'Inspect turbocharger', 'Contact professional technician'],
         urgencyLevel: 'medium',
+        estimatedCost: '$200-500',
+        aiProvider: 'demo',
+        confidence: 0.85,
       });
     } catch {
       setDiagnosisResult(null);
@@ -65,27 +63,32 @@ export default function Home() {
             {diagnosisResult && (
               <div className="bg-white dark:bg-gray-900 rounded-lg shadow-lg p-6 border-2 border-blue-200 dark:border-blue-800 mt-4 animate-fade-in">
                 <h3 className="text-xl font-bold mb-2 text-blue-900 dark:text-blue-200">🩺 Diagnosis Result</h3>
-                <p className="mb-2 text-gray-800 dark:text-gray-100">{diagnosisResult.diagnosis}</p>
-                {diagnosisResult.repairSteps && (
-                  <ul className="list-disc ml-6 text-green-700 dark:text-green-300 mb-2">
-                    {diagnosisResult.repairSteps.map((rec, i) => <li key={i}>{rec}</li>)}
-                  </ul>
+                
+                {diagnosisResult.possibleCauses && (
+                  <div className="mb-4">
+                    <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Possible Causes:</h4>
+                    <ul className="list-disc ml-6 text-red-700 dark:text-red-300">
+                      {diagnosisResult.possibleCauses.map((cause, i) => <li key={i}>{cause}</li>)}
+                    </ul>
+                  </div>
                 )}
-                {diagnosisResult.requiredTools && (
-                  <ul className="list-disc ml-6 text-blue-700 dark:text-blue-300 mb-2">
-                    {diagnosisResult.requiredTools.map((tool, i) => <li key={i}>{tool}</li>)}
-                  </ul>
+                
+                {diagnosisResult.recommendations && (
+                  <div className="mb-4">
+                    <h4 className="font-semibold text-gray-800 dark:text-gray-200 mb-2">Recommendations:</h4>
+                    <ul className="list-disc ml-6 text-green-700 dark:text-green-300">
+                      {diagnosisResult.recommendations.map((rec, i) => <li key={i}>{rec}</li>)}
+                    </ul>
+                  </div>
                 )}
-                {diagnosisResult.safetyWarnings && (
-                  <ul className="list-disc ml-6 text-yellow-700 dark:text-yellow-300 mb-2">
-                    {diagnosisResult.safetyWarnings.map((warn, i) => <li key={i}>{warn}</li>)}
-                  </ul>
-                )}
-                <div className="mt-2 text-sm text-gray-600 dark:text-gray-400">
-                  Confidence: {(diagnosisResult.confidence * 100).toFixed(1)}%<br />
-                  Estimated Time: {diagnosisResult.estimatedTime}<br />
-                  Estimated Cost: {diagnosisResult.estimatedCost}<br />
-                  Urgency: {diagnosisResult.urgencyLevel}
+                
+                <div className="mt-4 text-sm text-gray-600 dark:text-gray-400">
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>Confidence: {(diagnosisResult.confidence * 100).toFixed(1)}%</div>
+                    <div>Estimated Cost: {diagnosisResult.estimatedCost}</div>
+                    <div>Urgency: {diagnosisResult.urgencyLevel}</div>
+                    <div>AI Provider: {diagnosisResult.aiProvider}</div>
+                  </div>
                 </div>
               </div>
             )}

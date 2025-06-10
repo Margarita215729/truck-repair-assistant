@@ -9,7 +9,7 @@
  * - Performance improvements
  */
 import { AzureOpenAI } from 'openai';
-import type { TruckModel, DiagnosisRequest, DiagnosisResult, ChatMessage } from './types';
+import type { TruckModel, DiagnosisRequest, DiagnosisResult, ChatMessage, HealthStatus } from './types';
 
 interface AzureOpenAIConfig {
   endpoint: string;
@@ -169,37 +169,33 @@ Provide accurate, practical repair guidance with safety considerations. Always i
 
 Respond ONLY with valid JSON in this exact format:
 {
-  "diagnosis": "string - detailed diagnosis",
-  "confidence": number (1-10),
-  "repairSteps": ["string array of repair steps"],
-  "requiredTools": ["string array of tools needed"],
-  "estimatedTime": "string - time estimate",
+  "possibleCauses": ["string array of possible causes"],
+  "recommendations": ["string array of repair recommendations"],
+  "urgencyLevel": "low | medium | high",
   "estimatedCost": "string - cost estimate",
-  "safetyWarnings": ["string array of safety warnings"],
-  "urgencyLevel": "low | medium | high | critical"
+  "confidence": number (0.1-1.0)
 }`;
 
       const userPrompt = `TRUCK INFORMATION:
-Make: ${request.truck.make}
-Model: ${request.truck.model}
-Year: ${request.truck.year}
-Engine: ${request.truck.engine}
+Make: ${request.truckInfo.make}
+Model: ${request.truckInfo.model}
+Year: ${request.truckInfo.year}
+Engine: ${request.truckInfo.engine}
+Mileage: ${request.truckInfo.mileage || 'Not specified'}
 
 SYMPTOMS:
-${request.symptoms.join(', ')}
+${request.symptoms}
 
 ${request.additionalInfo ? `ADDITIONAL INFORMATION:\n${request.additionalInfo}\n` : ''}
 
-URGENCY LEVEL: ${request.urgency || 'medium'}
+URGENCY LEVEL: ${request.urgencyLevel || 'medium'}
 
 Please provide a comprehensive diagnosis including:
-1. Most likely diagnosis with confidence level (1-10)
-2. Step-by-step repair instructions
-3. Required tools and parts
-4. Estimated repair time
-5. Estimated cost range
-6. Critical safety warnings
-7. Urgency assessment`;
+1. Most likely causes of the issue
+2. Step-by-step repair recommendations
+3. Estimated cost range
+4. Critical safety warnings
+5. Urgency assessment`;
 
       const response = await client.chat.completions.create({
         model: this.config.deploymentName,
@@ -222,22 +218,23 @@ Please provide a comprehensive diagnosis including:
         const parsedResult = JSON.parse(content) as DiagnosisResult;
         
         // Validate required fields
-        if (!parsedResult.diagnosis || !parsedResult.confidence) {
+        if (!parsedResult.possibleCauses || !parsedResult.recommendations) {
           throw new Error('Invalid diagnosis response format');
         }
         
-        return parsedResult;
-      } catch (parseError) {
+        return {
+          ...parsedResult,
+          aiProvider: 'azure-openai'
+        };
+      } catch {
         console.warn('⚠️ JSON parsing failed, using fallback format');
         return {
-          diagnosis: content,
-          confidence: 7,
-          repairSteps: ['Contact a qualified mechanic for detailed diagnosis'],
-          requiredTools: ['Professional diagnostic tools'],
-          estimatedTime: '1-3 hours',
+          possibleCauses: [content],
+          recommendations: ['Contact a qualified mechanic for detailed diagnosis'],
+          urgencyLevel: request.urgencyLevel || 'medium',
           estimatedCost: '$200-800',
-          safetyWarnings: ['Always follow proper safety procedures'],
-          urgencyLevel: request.urgency || 'medium'
+          aiProvider: 'azure-openai',
+          confidence: 0.7
         };
       }
     }, 'diagnoseTruckIssue');
@@ -426,6 +423,41 @@ Please provide a comprehensive diagnosis including:
         }))
       };
     }, 'createChatCompletion');
+  }
+
+  /**
+   * Chat method for compatibility with enhanced-ai-service
+   */
+  async chat(messages: ChatMessage[]): Promise<string> {
+    return this.chatWithAssistant(messages);
+  }
+
+  /**
+   * Check health method for compatibility with enhanced-ai-service
+   */
+  async checkHealth(): Promise<HealthStatus> {
+    const startTime = Date.now();
+    
+    try {
+      const isHealthy = await this.healthCheck();
+      const latency = Date.now() - startTime;
+      
+      return {
+        service: 'azure-openai',
+        isHealthy,
+        latency,
+        timestamp: new Date().toISOString()
+      };
+    } catch (error) {
+      const latency = Date.now() - startTime;
+      return {
+        service: 'azure-openai',
+        isHealthy: false,
+        error: error instanceof Error ? error.message : String(error),
+        latency,
+        timestamp: new Date().toISOString()
+      };
+    }
   }
 
   // Performance monitoring

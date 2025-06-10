@@ -10,9 +10,9 @@ export async function POST(request: NextRequest) {
     const body: DiagnosisRequest = await request.json();
     
     // Validate request
-    if (!body.truck || !body.symptoms || body.symptoms.length === 0) {
+    if (!body.truckInfo || !body.symptoms || typeof body.symptoms !== 'string') {
       return NextResponse.json(
-        { error: 'Missing required fields: truck, symptoms' },
+        { error: 'Missing required fields: truckInfo, symptoms' },
         { status: 400 }
       );
     }

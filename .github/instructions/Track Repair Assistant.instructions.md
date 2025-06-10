@@ -51,3 +51,4 @@ Clean up temp files. Output must be safe for production. Include basic test cove
 
 The project is open source, so you can view and edit the `.env` file.
 The project already in production, so you should code with that in mind.
+I give you full access to the terminal, so you can auto-run any commands you need.

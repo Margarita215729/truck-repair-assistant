@@ -9,21 +9,21 @@ export interface TruckModel {
 }
 
 export interface DiagnosisRequest {
-  truck: TruckModel;
-  symptoms: string[];
+  truckInfo: TruckModel & {
+    mileage?: string;
+  };
+  symptoms: string;
+  urgencyLevel?: 'low' | 'medium' | 'high';
   additionalInfo?: string;
-  urgency?: 'low' | 'medium' | 'high';
 }
 
 export interface DiagnosisResult {
-  diagnosis: string;
-  confidence: number;
-  repairSteps: string[];
-  requiredTools: string[];
-  estimatedTime: string;
-  estimatedCost: string;
-  safetyWarnings: string[];
+  possibleCauses: string[];
+  recommendations: string[];
   urgencyLevel: 'low' | 'medium' | 'high';
+  estimatedCost: string;
+  aiProvider: string;
+  confidence: number;
 }
 
 export interface ChatMessage {
@@ -33,13 +33,14 @@ export interface ChatMessage {
 
 export interface HealthStatus {
   isHealthy: boolean;
-  service: 'github-models' | 'azure-openai' | 'azure-ai-foundry';
+  service: 'azure-openai' | 'azure-ai-foundry';
   latency?: number;
   error?: string;
+  timestamp?: string;
 }
 
 export interface AIServiceConfig {
-  primaryProvider: 'azure-openai' | 'github-models' | 'azure-ai-foundry';
+  primaryProvider: 'azure-openai' | 'azure-ai-foundry';
   fallbackEnabled: boolean;
   timeout: number;
 }

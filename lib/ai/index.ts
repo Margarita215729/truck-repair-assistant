@@ -1,9 +1,9 @@
 /**
  * AI Services Export Hub
  * 
- * Provides unified access to all AI-related services and components.
- * This module automatically exports the appropriate service based on the environment:
- * - Server-side: Full Azure OpenAI and Enhanced AI services
+ * Provides unified access to production-ready AI services.
+ * This module exports the appropriate service based on the environment:
+ * - Server-side: Full Azure AI Foundry and Azure OpenAI services
  * - Client-side: Safe wrapper that calls API endpoints
  */
 
@@ -26,7 +26,6 @@ export type {
 // Server-side services (only available on server)
 export { AzureOpenAIService, azureOpenAIService } from './azure-openai';
 export { EnhancedAIService, enhancedAIService } from './enhanced-ai-service';
-export { GitHubModelsService, githubModelsService } from './github-models';
 
 // Client-side safe wrapper
 export { ClientAIService, clientAIService } from './client-ai-service';

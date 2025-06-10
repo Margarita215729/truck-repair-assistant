@@ -4,22 +4,6 @@
       "runtime": "@vercel/node"
     }
   },
-  "env": {
-    "AZURE_OPENAI_API_KEY": "@azure-openai-api-key",
-    "AZURE_OPENAI_ENDPOINT": "@azure-openai-endpoint",
-    "AZURE_OPENAI_API_VERSION": "@azure-openai-api-version",
-    "AZURE_OPENAI_DEPLOYMENT_NAME": "@azure-openai-deployment-name",
-    "DATABASE_URL": "@database-url"
-  },
-  "build": {
-    "env": {
-      "AZURE_OPENAI_API_KEY": "@azure-openai-api-key",
-      "AZURE_OPENAI_ENDPOINT": "@azure-openai-endpoint",
-      "AZURE_OPENAI_API_VERSION": "@azure-openai-api-version",
-      "AZURE_OPENAI_DEPLOYMENT_NAME": "@azure-openai-deployment-name",
-      "DATABASE_URL": "@database-url"
-    }
-  },
   "regions": ["iad1"],
   "framework": "nextjs"
 }

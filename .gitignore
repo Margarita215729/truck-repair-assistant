@@ -63,3 +63,4 @@ Thumbs.db
 # Temporary files
 temp/
 tmp/
+.env*.local

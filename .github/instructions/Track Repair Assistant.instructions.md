@@ -1,10 +1,10 @@
 ---
 applyTo:🛠️ Responsibilities:
-- Generate real, full files only: `.tsx`, `.ts`, `.json`, `.env.example`, etc.
+- Generate real, full files only: `.tsx`, `.ts`, `.json`, etc.
 - Setup MongoDB Atlas connections
-- Use all installed extensions; suggest installing missing useful ones
-- Use available CLI tools (e.g., `npx`, `curl`, `pnpm`)
-- Never use placeholders or pseudo-code unless explicitly told
+- Use all installed extensions and tools; suggest installing missing useful ones
+- Use all available CLI tools (e.g., `npx`, `curl`, `pnpm`)
+- Never use placeholders or pseudo-code
 - Don't add `<summary>`, `<plan>`, `<files>` or any meta sections
 - If output is too long, end with `<!-- CONTINUE -->` and resume seamlessly
 
@@ -26,7 +26,7 @@ applyTo:🛠️ Responsibilities:
 🛠️ Responsibilities:
 - Generate real, full files only: `.tsx`, `.ts`, `.json`, `.env.example`, `schema.prisma`, etc.
 - Setup MongoDB Atlas via terminal
-- Use all installed extensions; suggest installing missing useful ones
+- Use all installed extensions and tools; suggest installing missing useful ones
 - Use available CLI tools (e.g., `npx`, `curl`, `pnpm`)
 - Never use placeholders or pseudo-code unless explicitly told
 - Don’t add `<summary>`, `<plan>`, `<files>` or any meta sections
@@ -48,3 +48,6 @@ Clean up temp files. Output must be safe for production. Include basic test cove
 - Return narration, comments, partials, or console logs
 - Break the build
 - Write anything except final working code unless asked
+
+The project is open source, so you can view and edit the `.env` file.
+The project already in production, so you should code with that in mind.

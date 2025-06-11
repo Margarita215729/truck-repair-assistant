@@ -288,10 +288,10 @@ Please provide a comprehensive diagnosis including:
     }
   }
 
-  private async* processStream(stream: any): AsyncIterable<string> {
+  private async* processStream(stream: AsyncIterable<unknown>): AsyncIterable<string> {
     try {
       for await (const chunk of stream) {
-        const content = chunk.choices?.[0]?.delta?.content;
+        const content = (chunk as { choices?: { delta?: { content?: string } }[] })?.choices?.[0]?.delta?.content;
         if (content) {
           yield content;
         }
@@ -381,7 +381,7 @@ Please provide a comprehensive diagnosis including:
         averageLatency: healthMetrics?.avg || 0,
         errorRate: isHealthy ? 0 : 1
       };
-    } catch (error) {
+    } catch {
       return {
         status: 'unhealthy',
         averageLatency: 0,
@@ -410,7 +410,10 @@ Please provide a comprehensive diagnosis including:
 
       const response = await client.chat.completions.create({
         model: options.model || this.config.deploymentName,
-        messages: messages as any,
+        messages: messages.map(msg => ({
+          role: msg.role,
+          content: msg.content
+        })),
         max_tokens: options.maxTokens || 2000,
         temperature: options.temperature || 0.1,
       });

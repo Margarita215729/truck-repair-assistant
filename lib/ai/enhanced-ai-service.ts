@@ -17,15 +17,13 @@
 import { AzureOpenAIService } from './azure-openai';
 import { runAgentConversation } from './azure-agent';
 import type {
-  TruckModel,
   DiagnosisRequest,
   DiagnosisResult,
   ChatMessage,
   HealthStatus,
   AIServiceConfig,
   FallbackResult,
-  AIServiceError,
-  StreamCallback
+  AIServiceError
 } from './types';
 
 export class EnhancedAIService {

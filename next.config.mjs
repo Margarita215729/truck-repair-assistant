@@ -1,13 +1,5 @@
 export default {
-  // Next.js config for production compatibility
-  experimental: {
-    turbo: {
-      rules: {
-        '*.ts': ['@next/typescript/compiled'],
-        '*.tsx': ['@next/typescript/compiled']
-      }
-    }
-  },
+  // Next.js config for production compatibility  
   typescript: {
     // Type checking for Vercel build
     ignoreBuildErrors: false,
@@ -15,10 +7,6 @@ export default {
   eslint: {
     // ESLint during builds
     ignoreDuringBuilds: false,
-  },
-  env: {
-    // Force production environment variables
-    NODE_ENV: 'production',
   },
   // Vercel compatibility
   poweredByHeader: false,

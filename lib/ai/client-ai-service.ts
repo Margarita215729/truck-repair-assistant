@@ -1,11 +1,11 @@
 /**
  * Client-side AI service wrapper
  * 
- * Provides safe access to AI services from the browser by calling server-side API endpoints.
+ * Provides safe access to AI se  async streamChatResponse(_messages: ChatMessage[]): Promise<AsyncIterable<string>> {vices from the browser by calling server-side API endpoints.
  * This ensures that sensitive API keys are never exposed to the client.
  */
 
-import type { DiagnosisRequest, DiagnosisResult, ChatMessage, HealthStatus } from './types';
+import type { DiagnosisRequest, DiagnosisResult, ChatMessage, HealthStatus, TruckModel } from './types';
 
 export class ClientAIService {
   private baseUrl: string;
@@ -77,7 +77,7 @@ export class ClientAIService {
     throw new Error('Streaming not yet implemented for client-side service');
   }
 
-  async analyzeEngineSound(audioBlob: Blob, truckInfo: any): Promise<string> {
+  async analyzeEngineSound(_audioBlob: Blob, _truckInfo: TruckModel): Promise<string> {
     // This would need to be implemented with file upload to server
     throw new Error('Audio analysis not yet implemented for client-side service');
   }

@@ -45,7 +45,7 @@ export function AudioRecorder({
         const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
         setPermissionGranted(true);
         stream.getTracks().forEach(track => track.stop()); // Stop immediately after permission check
-      } catch (err) {
+      } catch {
         setPermissionGranted(false);
         setError('Microphone permission denied. Please enable microphone access to record engine sounds.');
       }
@@ -166,7 +166,7 @@ export function AudioRecorder({
     
     try {
       // Create audio context for analysis
-      const audioContext = new (window.AudioContext || (window as any).webkitAudioContext)();
+      const audioContext = new (window.AudioContext || (window as unknown as { webkitAudioContext: typeof AudioContext }).webkitAudioContext)();
       audioContextRef.current = audioContext;
       
       const arrayBuffer = await audioBlob.arrayBuffer();

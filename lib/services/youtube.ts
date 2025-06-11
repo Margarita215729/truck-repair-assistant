@@ -11,6 +11,39 @@ export interface YouTubeVideo {
   url: string;
 }
 
+interface YouTubeSearchItem {
+  id: {
+    videoId: string;
+  };
+}
+
+interface YouTubeVideoItem {
+  id: string;
+  snippet: {
+    title: string;
+    description: string;
+    publishedAt: string;
+    channelTitle: string;
+    thumbnails: {
+      default?: {
+        url: string;
+      };
+      medium?: {
+        url: string;
+      };
+      high: {
+        url: string;
+      };
+    };
+  };
+  contentDetails: {
+    duration: string;
+  };
+  statistics: {
+    viewCount: string;
+  };
+}
+
 export interface YouTubeSearchResult {
   videos: YouTubeVideo[];
   nextPageToken?: string;
@@ -43,7 +76,7 @@ export class YouTubeService {
       }
 
       const searchData = await searchResponse.json();
-      const videoIds = searchData.items.map((item: any) => item.id.videoId).join(',');
+      const videoIds = searchData.items.map((item: YouTubeSearchItem) => item.id.videoId).join(',');
 
       // Get video details
       const detailsResponse = await fetch(
@@ -56,11 +89,11 @@ export class YouTubeService {
 
       const detailsData = await detailsResponse.json();
 
-      const videos: YouTubeVideo[] = detailsData.items.map((item: any) => ({
+      const videos: YouTubeVideo[] = detailsData.items.map((item: YouTubeVideoItem) => ({
         id: item.id,
         title: item.snippet.title,
         description: item.snippet.description,
-        thumbnail: item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default.url,
+        thumbnail: item.snippet.thumbnails.medium?.url || item.snippet.thumbnails.default?.url || item.snippet.thumbnails.high.url,
         duration: this.formatDuration(item.contentDetails.duration),
         publishedAt: item.snippet.publishedAt,
         channelTitle: item.snippet.channelTitle,

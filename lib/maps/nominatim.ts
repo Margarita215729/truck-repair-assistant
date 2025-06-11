@@ -1,3 +1,15 @@
+interface NominatimResult {
+  display_name: string;
+  lat: string;
+  lon: string;
+  address?: Record<string, string>;
+  extratags?: Record<string, string>;
+  name?: string;
+  shop?: string;
+  amenity?: string;
+  craft?: string;
+}
+
 export interface ServiceLocation {
   name: string;
   address: string;
@@ -142,7 +154,7 @@ export class NominatimService {
     ];
   }
 
-  private processResults(results: any[], userLat: number, userLng: number): ServiceLocation[] {
+  private processResults(results: NominatimResult[], userLat: number, userLng: number): ServiceLocation[] {
     return results.map(result => {
       const lat = parseFloat(result.lat);
       const lng = parseFloat(result.lon);
@@ -161,7 +173,7 @@ export class NominatimService {
     });
   }
 
-  private formatAddress(result: any): string {
+  private formatAddress(result: NominatimResult): string {
     const address = result.address || {};
     const parts = [
       address.house_number,
@@ -174,7 +186,7 @@ export class NominatimService {
     return parts.join(', ');
   }
 
-  private extractServices(result: any): string[] {
+  private extractServices(result: NominatimResult): string[] {
     const services: string[] = [];
     const tags = result.extratags || {};
     

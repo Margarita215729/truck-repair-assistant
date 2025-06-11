@@ -1,4 +1,4 @@
-import { ServiceMapWrapper } from '../components/maps/ServiceMapWrapper';
+import { ServiceMapWrapper } from '../../components/maps/ServiceMapWrapper';
 
 export default function ServiceMapPage() {
   return (

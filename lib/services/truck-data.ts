@@ -5,7 +5,7 @@ export interface TruckData {
   year: number;
   engines: string[];
   commonIssues: string[];
-  specifications?: Record<string, any>;
+  specifications?: Record<string, unknown>;
 }
 
 export interface TruckModel {

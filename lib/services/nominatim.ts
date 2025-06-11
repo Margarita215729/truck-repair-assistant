@@ -43,7 +43,7 @@ export class NominatimService {
       }
 
       const data = await response.json();
-      return data.map((item: any) => ({
+      return data.map((item: { lat: string; lon: string; display_name: string; address?: Record<string, string> }) => ({
         lat: parseFloat(item.lat),
         lon: parseFloat(item.lon),
         display_name: item.display_name,

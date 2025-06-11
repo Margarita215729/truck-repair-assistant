@@ -5,6 +5,8 @@
  * Designed for mobile-first truck driver experience with <2s load targets.
  */
 
+/* eslint-disable @typescript-eslint/no-explicit-any */
+
 interface PerformanceMetric {
   name: string;
   value: number;

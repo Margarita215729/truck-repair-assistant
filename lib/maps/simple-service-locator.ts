@@ -11,6 +11,18 @@ export interface ServiceLocation {
   businessStatus?: 'OPERATIONAL' | 'CLOSED_TEMPORARILY' | 'CLOSED_PERMANENTLY';
 }
 
+interface NominatimResult {
+  display_name: string;
+  lat: string;
+  lon: string;
+  address?: Record<string, string>;
+  extratags?: Record<string, string>;
+  name?: string;
+  shop?: string;
+  amenity?: string;
+  craft?: string;
+}
+
 export interface SearchOptions {
   radius?: number;
   maxResults?: number;
@@ -124,8 +136,8 @@ export class TruckServiceLocator {
     return queries[serviceType] || queries.truck_repair;
   }
 
-  private processResults(results: unknown[], userLat: number, userLng: number): ServiceLocation[] {
-    return results.map((result: any) => {
+  private processResults(results: NominatimResult[], userLat: number, userLng: number): ServiceLocation[] {
+    return results.map((result: NominatimResult) => {
       const lat = parseFloat(result.lat);
       const lng = parseFloat(result.lon);
       const distance = this.calculateDistance(userLat, userLng, lat, lng);
@@ -145,7 +157,7 @@ export class TruckServiceLocator {
     });
   }
 
-  private formatAddress(result: any): string {
+  private formatAddress(result: NominatimResult): string {
     const address = result.address || {};
     const parts = [
       address.house_number,
@@ -157,7 +169,7 @@ export class TruckServiceLocator {
     return parts.join(', ') || result.display_name || 'Address unavailable';
   }
 
-  private extractServices(result: any): string[] {
+  private extractServices(result: NominatimResult): string[] {
     const services: string[] = [];
     const tags = result.extratags || {};
     
@@ -169,7 +181,7 @@ export class TruckServiceLocator {
     return services;
   }
 
-  private estimateRating(result: any): number {
+  private estimateRating(result: NominatimResult): number {
     let rating = 3.5;
     if (result.extratags?.phone) rating += 0.3;
     if (result.extratags?.website) rating += 0.2;

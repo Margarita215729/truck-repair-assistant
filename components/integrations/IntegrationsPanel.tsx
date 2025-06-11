@@ -1,114 +1,48 @@
 'use client';
 
-import React, { useState, useEffect } from 'react';
-import { Truck, Wrench, MapPin, Package, Youtube, DollarSign, Shield, Clock, Star, ExternalLink } from 'lucide-react';
+import React, { useState } from 'react';
+import { Truck, Wrench, MapPin, Package, Youtube, Shield, ExternalLink } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle } from '../ui/card';
 import { Badge } from '../ui/badge';
 import { Button } from '../ui/button';
 
+// Future development interfaces - kept for next phases
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 interface VehicleInfo {
   make: string;
   model: string;
   year: number;
 }
 
-interface NhtsaData {
-  recalls: number;
-  complaints: number;
-}
-
-interface PartsSupplier {
-  name: string;
-  partNumber: string;
-  price: string;
-  availability: string;
-}
-
-interface ServiceLocation {
-  name: string;
-  address: string;
-  distance: string;
-  rating: number;
-}
-
-interface DiagnosticCode {
-  code: string;
-  description: string;
-  severity: string;
-}
-
-interface TechnicalBulletin {
+interface VideoResult {
   id: string;
   title: string;
-  date: string;
+  description: string;
+  thumbnail: string;
+  channelTitle: string;
+  publishedAt: string;
+  duration: string;
+  viewCount: string;
+  chapters?: VideoChapter[];
 }
 
-interface MaintenanceSchedule {
-  nextService: string;
-  mileage: number;
+interface VideoChapter {
+  title: string;
+  timestamp: string;
 }
 
-interface IntegrationData {
-  vehicleInfo: VehicleInfo;
-  nhtsa: NhtsaData;
-  partsSuppliers: PartsSupplier[];
-  serviceLocations: ServiceLocation[];
-  diagnosticCodes: DiagnosticCode[];
-  technicalBulletins: TechnicalBulletin[];
-  maintenanceSchedule: MaintenanceSchedule;
+interface ApiItem {
+  name: string;
+  description: string;
+  cost: string;
+  url?: string;
+  auth?: string;
+  features?: string[];
 }
 
 export function IntegrationsPanel() {
   const [selectedCategory, setSelectedCategory] = useState('all');
-  const [integrationData, setIntegrationData] = useState<IntegrationData | null>(null);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [videoResults, setVideoResults] = useState<any[]>([]);
-  const [isLoading, setIsLoading] = useState(false);
-
-  const loadVideos = async () => {
-    setIsLoading(true);
-    try {
-      const category = selectedCategory === 'all' ? 'truck repair' : selectedCategory;
-      const response = await fetch(`/api/integrations/youtube?q=${encodeURIComponent(category)}&maxResults=12`);
-      const data = await response.json();
-      setVideoResults(data.videos || []);
-    } catch (error) {
-      console.error('Error loading videos:', error);
-      setVideoResults([]);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    loadVideos();
-  }, []);
-
-  useEffect(() => {
-    loadVideos();
-  }, [selectedCategory]);
-
-  const mockIntegrationData: IntegrationData = {
-    vehicleInfo: { make: 'Freightliner', model: 'Cascadia', year: 2019 },
-    nhtsa: { recalls: 3, complaints: 12 },
-    partsSuppliers: [
-      { name: 'Detroit Diesel Parts', partNumber: 'DD15-123', price: '$245.99', availability: 'In Stock' },
-      { name: 'Freightliner Direct', partNumber: 'FL-456', price: '$189.50', availability: 'Backordered' }
-    ],
-    serviceLocations: [
-      { name: 'Highway Truck Service', address: '123 Industrial Blvd', distance: '2.3 miles', rating: 4.8 },
-      { name: 'Big Rig Repair', address: '456 Truck Stop Way', distance: '5.1 miles', rating: 4.2 }
-    ],
-    diagnosticCodes: [
-      { code: 'P0401', description: 'EGR Flow Insufficient', severity: 'Yellow' },
-      { code: 'P1234', description: 'Turbocharger Overboost', severity: 'Red' }
-    ],
-    technicalBulletins: [
-      { id: 'TSB-2023-001', title: 'Engine Oil Pressure Issue', date: '2023-11-15' },
-      { id: 'TSB-2023-002', title: 'Transmission Shift Quality', date: '2023-10-22' }
-    ],
-    maintenanceSchedule: { nextService: 'A Service', mileage: 85000 }
-  };
+  const [videoResults] = useState<VideoResult[]>([]);
 
   const integrationCategories = {
     all: 'All Integrations',
@@ -205,7 +139,7 @@ export function IntegrationsPanel() {
     ]
   };
 
-  const renderApiCard = (api: any, index: number) => (
+  const renderApiCard = (api: ApiItem, index: number) => (
     <Card key={index} className="border border-gray-200 hover:shadow-lg transition-shadow">
       <CardHeader>
         <CardTitle className="flex items-center justify-between">
@@ -224,7 +158,7 @@ export function IntegrationsPanel() {
           
           <div className="space-y-1">
             <div className="font-medium text-sm">Features:</div>
-            {api.features?.map((feature: any, idx: number) => (
+            {api.features?.map((feature: string, idx: number) => (
               <div key={idx} className="flex items-center gap-2 text-xs">
                 <div className="w-1 h-1 bg-blue-600 rounded-full"></div>
                 <span className="text-gray-600">{feature}</span>
@@ -275,24 +209,9 @@ export function IntegrationsPanel() {
             <Youtube className="w-6 h-6 text-red-600" />
             Professional Repair Video Tutorials
           </h2>
-          
-          <div className="mb-6">
-            <div className="flex gap-4">
-              <input
-                type="text"
-                value={searchQuery}
-                onChange={(e) => setSearchQuery(e.target.value)}
-                placeholder="Search for specific repair procedures..."
-                className="px-3 py-2 border rounded-lg flex-1"
-              />
-              <Button onClick={loadVideos} disabled={isLoading}>
-                {isLoading ? 'Searching...' : 'Search Videos'}
-              </Button>
-            </div>
-          </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {videoResults.map((video: any, index: number) => (
+            {videoResults.map((video: VideoResult, index: number) => (
               <Card key={index} className="border border-gray-200 hover:shadow-lg transition-shadow">
                 <CardContent className="p-4">
                   <div className="aspect-video bg-gray-100 rounded-lg mb-3 flex items-center justify-center">
@@ -300,13 +219,13 @@ export function IntegrationsPanel() {
                   </div>
                   <h3 className="font-semibold text-sm mb-2 line-clamp-2">{video.title}</h3>
                   <div className="flex items-center justify-between text-xs text-gray-600 mb-3">
-                    <span>{video.channel}</span>
+                    <span>{video.channelTitle}</span>
                     <Badge variant="secondary">{video.duration}</Badge>
                   </div>
                   <div className="space-y-2">
-                    {video.chapters?.map((chapter: any, idx: number) => (
+                    {video.chapters?.map((chapter: VideoChapter, idx: number) => (
                       <div key={idx} className="text-xs bg-gray-50 p-2 rounded">
-                        <span className="font-medium">{chapter.time}</span> - {chapter.title}
+                        <span className="font-medium">{chapter.timestamp}</span> - {chapter.title}
                       </div>
                     ))}
                   </div>
@@ -337,7 +256,7 @@ export function IntegrationsPanel() {
               <Badge variant="outline">{apiList.length} APIs</Badge>
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-              {apiList.map((api: any, index: number) => renderApiCard(api, index))}
+              {apiList.map((api: ApiItem, index: number) => renderApiCard(api, index))}
             </div>
           </div>
         );

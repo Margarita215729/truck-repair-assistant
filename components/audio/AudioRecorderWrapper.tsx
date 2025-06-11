@@ -15,8 +15,12 @@ interface AudioAnalysis {
   possibleIssues: string[];
 }
 
+interface AudioRecorderProps {
+  onAnalysisResult?: (analysis: AudioAnalysis) => void;
+}
+
 export function AudioRecorderWrapper({ onAnalysisResult }: AudioRecorderWrapperProps) {
-  const [AudioRecorderComponent, setAudioRecorderComponent] = useState<React.ComponentType<any> | null>(null);
+  const [AudioRecorderComponent, setAudioRecorderComponent] = useState<React.ComponentType<AudioRecorderProps> | null>(null);
   const [isClient, setIsClient] = useState(false);
 
   useEffect(() => {
@@ -64,7 +68,7 @@ export function AudioRecorderWrapper({ onAnalysisResult }: AudioRecorderWrapperP
               <div className="bg-blue-50 border border-blue-300 rounded-lg p-4">
                 <h4 className="font-semibold text-blue-800 mb-2">🔍 Manual Diagnosis Available</h4>
                 <p className="text-sm text-blue-800">
-                  Switch to the "Diagnosis & Repair" tab for comprehensive truck diagnostics without audio analysis.
+                  Switch to the &quot;Diagnosis &amp; Repair&quot; tab for comprehensive truck diagnostics without audio analysis.
                 </p>
               </div>
             </div>

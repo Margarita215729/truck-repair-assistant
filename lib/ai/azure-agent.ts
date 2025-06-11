@@ -1,13 +1,28 @@
 import { AIProjectClient } from "@azure/ai-projects";
-import { DefaultAzureCredential } from "@azure/identity";
+import { DefaultAzureCredential, ClientSecretCredential } from "@azure/identity";
 
 const endpoint = process.env.AZURE_PROJECTS_ENDPOINT!;
 const agentId = process.env.AZURE_AGENT_ID!;
 const threadId = process.env.AZURE_THREAD_ID!;
 
+// For Vercel deployment, use service principal authentication
+const tenantId = process.env.AZURE_TENANT_ID;
+const clientId = process.env.AZURE_CLIENT_ID;
+const clientSecret = process.env.AZURE_CLIENT_SECRET;
+
 export async function runAgentConversation(userMessage: string) {
   try {
-    const project = new AIProjectClient(endpoint, new DefaultAzureCredential());
+    // Use service principal authentication for Vercel (serverless), fallback to default credential
+    let credential;
+    if (tenantId && clientId && clientSecret) {
+      // Service principal authentication (works in Vercel)
+      credential = new ClientSecretCredential(tenantId, clientId, clientSecret);
+    } else {
+      // Default credential chain (works locally)
+      credential = new DefaultAzureCredential();
+    }
+    
+    const project = new AIProjectClient(endpoint, credential);
     const agent = await project.agents.getAgent(agentId);
     const thread = await project.agents.threads.get(threadId);
     await project.agents.messages.create(thread.id, "user", userMessage);

@@ -1,5 +1,53 @@
 # Truck Repair Assistant — TODO (Q2-Q3 2025)
 
+## 🚨 CRITICAL ISSUES TO FIX (Production Blockers)
+
+### Authentication & Deployment Issues
+- [ ] **CRITICAL**: Fix Azure AI Foundry authentication in Vercel
+  - Current issue: DefaultAzureCredential not working in serverless environment
+  - Need to implement explicit credential configuration for production
+  - Test authentication with Azure Key Vault or Service Principal
+  - Verify all environment variables are properly configured in Vercel
+
+### UI/UX Critical Issues
+- [ ] **Fix Service Map Component**: Currently not displaying or filtering correctly
+  - Component appears broken in production
+  - Map markers not showing truck locations
+  - Search/filter functionality not working
+  
+- [ ] **Fix Common Issues Display**: Not updating when truck model changes
+  - Static content not refreshing based on selected truck type
+  - Dynamic content loading issues
+  
+- [ ] **Make Truck Selection Optional**: Allow custom input instead of required dropdowns
+  - Many users have trucks not in our predefined lists
+  - Add "Other" option with text input fields
+  - Validate custom inputs properly
+
+### Data Integration Issues  
+- [ ] **Integrate Static Truck Data**: Files in "Static data for production" folder not being used
+  - Truck specifications, common issues, repair procedures
+  - Import data into MongoDB Atlas
+  - Update AI prompts to use this data
+
+### Remove Unnecessary Features
+- [ ] **Remove AI Service Dashboard**: Not needed for truck drivers
+  - Remove `/dashboard` route and components
+  - Clean up navigation to remove dashboard links
+  
+- [ ] **Remove Urgency Selector**: Broken trucks are inherently urgent
+  - Simplify repair request form
+  - Remove urgency-based logic from AI processing
+
+### API & Functionality Testing
+- [ ] **Verify All API Endpoints Work in Production**
+  - Test `/api/ai/*` endpoints with real Azure credentials
+  - Test `/api/transcribe` for audio processing
+  - Verify MongoDB connections and data operations
+  - Test error handling and fallback mechanisms
+
+---
+
 ## ⚠️ MIGRATION TASKS - LEGACY CODE CLEANUP
 
 ### PostgreSQL to MongoDB Atlas Migration

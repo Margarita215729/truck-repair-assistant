@@ -9,7 +9,7 @@ export const Button = ({
   ...props
 }: React.ButtonHTMLAttributes<HTMLButtonElement> & {
   children: React.ReactNode;
-  variant?: 'default' | 'primary' | 'secondary' | 'danger' | 'outline';
+  variant?: 'default' | 'primary' | 'secondary' | 'danger' | 'outline' | 'destructive' | 'ghost';
   size?: 'default' | 'sm' | 'lg';
   className?: string;
 }) => {
@@ -20,6 +20,8 @@ export const Button = ({
     secondary: 'bg-green-600 text-white hover:bg-green-700',
     danger: 'bg-red-600 text-white hover:bg-red-700',
     outline: 'border border-gray-300 text-gray-700 bg-transparent hover:bg-gray-50',
+    destructive: 'bg-red-600 text-white hover:bg-red-700',
+    ghost: 'text-gray-700 hover:bg-gray-100',
   };
   const sizes: Record<string, string> = {
     default: 'px-4 py-2',

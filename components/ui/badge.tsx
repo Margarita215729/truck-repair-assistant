@@ -7,7 +7,7 @@ export const Badge = ({
   ...props
 }: React.HTMLAttributes<HTMLSpanElement> & {
   children: React.ReactNode;
-  variant?: 'default' | 'warning' | 'success' | 'error' | 'destructive' | 'outline';
+  variant?: 'default' | 'warning' | 'success' | 'error' | 'destructive' | 'outline' | 'secondary';
 }) => {
   const base = 'inline-block px-2 py-1 text-xs font-semibold rounded';
   const variants: Record<string, string> = {
@@ -17,6 +17,7 @@ export const Badge = ({
     error: 'bg-red-100 text-red-800',
     destructive: 'bg-red-100 text-red-800',
     outline: 'border border-gray-300 text-gray-700 bg-transparent',
+    secondary: 'bg-blue-100 text-blue-800',
   };
   return (
     <span

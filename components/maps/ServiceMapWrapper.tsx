@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from 'react';
 import { MapPin, Loader2, Search, Navigation } from 'lucide-react';
+import { SimpleServiceMap } from './SimpleServiceMap';
 
 interface ServiceLocation {
   name: string;
@@ -17,21 +18,12 @@ interface ServiceLocation {
 }
 
 export function ServiceMapWrapper() {
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const [MapComponent, setMapComponent] = useState<React.ComponentType<any> | null>(null);
   const [userLocation, setUserLocation] = useState<{ lat: number; lng: number } | null>(null);
   const [selectedServiceType, setSelectedServiceType] = useState('truck_repair');
   const [selectedService, setSelectedService] = useState<ServiceLocation | null>(null);
   const [isLoadingLocation, setIsLoadingLocation] = useState(false);
   const [searchRadius, setSearchRadius] = useState(50);
   const [addressInput, setAddressInput] = useState('');
-
-  useEffect(() => {
-    // Динамически импортируем карту только на клиенте
-    import('./MapboxServiceMap').then((mod) => {
-      setMapComponent(() => mod.MapboxServiceMap);
-    });
-  }, []);
 
   // Получить текущее местоположение пользователя
   const getCurrentLocation = async () => {
@@ -84,8 +76,7 @@ export function ServiceMapWrapper() {
     getCurrentLocation();
   }, []);
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  const handleServiceSelect = (service: any) => {
+  const handleServiceSelect = (service: ServiceLocation) => {
     setSelectedService(service);
   };
 
@@ -93,25 +84,13 @@ export function ServiceMapWrapper() {
     setSelectedServiceType(serviceType);
   };
 
-  if (!MapComponent) {
-    return (
-      <div className="flex items-center justify-center h-96 bg-gradient-to-br from-blue-50 to-indigo-100 rounded-xl border border-blue-200">
-        <div className="text-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600 mx-auto mb-4"></div>
-          <p className="text-gray-700 font-medium">Loading Professional Service Map...</p>
-          <p className="text-gray-500 text-sm mt-1">Powered by Mapbox GL JS</p>
-        </div>
-      </div>
-    );
-  }
-
   return (
     <div className="space-y-4">
       {/* Control Panel */}
       <div className="bg-white rounded-xl shadow-lg border border-gray-200 p-6">
         <div className="flex items-center gap-3 mb-4">
           <MapPin className="w-6 h-6 text-blue-600" />
-          <h2 className="text-xl font-bold text-gray-900">Professional Service Locator</h2>
+          <h2 className="text-xl font-bold text-gray-900">Service Locator</h2>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -190,9 +169,9 @@ export function ServiceMapWrapper() {
         )}
       </div>
 
-      {/* Map Component */}
+      {/* Simple Service Map Component */}
       <div className="h-[600px]">
-        <MapComponent
+        <SimpleServiceMap
           userLocation={userLocation}
           selectedServiceType={selectedServiceType}
           onServiceSelect={handleServiceSelect}

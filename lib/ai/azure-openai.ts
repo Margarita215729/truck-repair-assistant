@@ -411,7 +411,7 @@ Please provide a comprehensive diagnosis including:
       const response = await client.chat.completions.create({
         model: options.model || this.config.deploymentName,
         messages: messages.map(msg => ({
-          role: msg.role,
+          role: msg.role as 'system' | 'user' | 'assistant',
           content: msg.content
         })),
         max_tokens: options.maxTokens || 2000,

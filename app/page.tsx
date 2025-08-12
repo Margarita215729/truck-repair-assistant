@@ -7,7 +7,15 @@ import { AudioRecorderWrapper } from '../components/audio/AudioRecorderWrapper';
 import { AudioAnalysisDisplay } from '../components/audio/AudioAnalysisDisplay';
 import { ServiceMapWrapper } from '../components/maps/ServiceMapWrapper';
 import type { DiagnosisResult } from '@/lib/ai/types';
-import type { TruckModel } from '../components/data/trucks/models';
+
+interface TruckModel {
+  id: string;
+  make: string;
+  model: string;
+  engines: string[];
+  years: number[];
+  commonIssues: string[];
+}
 
 interface AudioAnalysis {
   duration: number;

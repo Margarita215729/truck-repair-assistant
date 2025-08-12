@@ -1,7 +1,15 @@
 'use client';
 
 import { useState } from 'react';
-import { TruckModel } from '../data/trucks/models';
+
+interface TruckModel {
+  id: string;
+  make: string;
+  model: string;
+  engines: string[];
+  years: number[];
+  commonIssues: string[];
+}
 
 interface DiagnosisFormProps {
   selectedTruck: (TruckModel & { year: number; engine: string }) | null;

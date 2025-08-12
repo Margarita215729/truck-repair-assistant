@@ -72,12 +72,14 @@ export class ClientAIService {
   }
 
   // Placeholder methods for future implementations
-  async streamChatResponse(messages: ChatMessage[]): Promise<AsyncIterable<string>> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async streamChatResponse(_messages?: ChatMessage[]): Promise<AsyncIterable<string>> {
     // This would need to be implemented with Server-Sent Events or WebSockets
     throw new Error('Streaming not yet implemented for client-side service');
   }
 
-  async analyzeEngineSound(_audioBlob: Blob, _truckInfo: TruckModel): Promise<string> {
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  async analyzeEngineSound(_audioBlob?: Blob, _truckInfo?: TruckModel): Promise<string> {
     // This would need to be implemented with file upload to server
     throw new Error('Audio analysis not yet implemented for client-side service');
   }

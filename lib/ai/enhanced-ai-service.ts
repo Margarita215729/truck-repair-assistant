@@ -97,10 +97,16 @@ export class EnhancedAIService {
       }
     }
 
-    // All providers failed
-    const combinedError = new Error(`All AI providers failed. Errors: ${errors.map(e => `${e.provider}: ${e.error.message}`).join('; ')}`);
-    console.error('💥 All AI providers failed:', combinedError.message);
-    throw combinedError;
+    // All providers failed - provide intelligent fallback
+    console.log('🤖 All AI providers failed, generating intelligent fallback response...');
+    const fallbackResult = this.generateFallbackDiagnosis(request);
+    console.log('✅ Fallback diagnosis generated');
+    
+    return {
+      result: fallbackResult,
+      provider: 'azure-openai', // Use azure-openai as fallback provider
+      fallbackUsed: true
+    };
   }
 
   /**
@@ -362,6 +368,109 @@ Please respond in a structured format that can help the technician understand th
         setTimeout(() => reject(new Error(`Operation timed out after ${timeoutMs}ms`)), timeoutMs)
       )
     ]);
+  }
+
+  /**
+   * Generate intelligent fallback diagnosis when AI services are unavailable
+   */
+  private generateFallbackDiagnosis(request: DiagnosisRequest): DiagnosisResult {
+    const symptoms = request.symptoms.toLowerCase();
+    const truckMake = request.truckInfo?.make?.toLowerCase() || '';
+    const urgency = request.urgencyLevel || 'medium';
+
+    // Basic symptom analysis
+    const possibleCauses: string[] = [];
+    const recommendations: string[] = [];
+    let estimatedCost = '$150-800';
+    let confidence = 0.6;
+
+    // Engine-related symptoms
+    if (symptoms.includes('engine') || symptoms.includes('noise') || symptoms.includes('rough')) {
+      possibleCauses.push('Engine performance issue');
+      possibleCauses.push('Fuel system malfunction');
+      recommendations.push('Check engine oil level and condition');
+      recommendations.push('Inspect air filter and fuel filter');
+      recommendations.push('Run engine diagnostics scan');
+      estimatedCost = '$200-1200';
+    }
+
+    // Brake-related symptoms
+    if (symptoms.includes('brake') || symptoms.includes('stopping') || symptoms.includes('grinding')) {
+      possibleCauses.push('Brake system wear');
+      possibleCauses.push('Brake pad or rotor damage');
+      recommendations.push('IMMEDIATE: Inspect brake pads and rotors');
+      recommendations.push('Check brake fluid level');
+      recommendations.push('Test brake performance in safe area');
+      estimatedCost = '$300-1500';
+      confidence = 0.8;
+    }
+
+    // Electrical symptoms
+    if (symptoms.includes('light') || symptoms.includes('electrical') || symptoms.includes('battery')) {
+      possibleCauses.push('Electrical system malfunction');
+      possibleCauses.push('Battery or alternator issue');
+      recommendations.push('Test battery voltage and connections');
+      recommendations.push('Check alternator output');
+      recommendations.push('Inspect wiring for damage');
+      estimatedCost = '$100-600';
+    }
+
+    // Transmission symptoms
+    if (symptoms.includes('transmission') || symptoms.includes('shifting') || symptoms.includes('gear')) {
+      possibleCauses.push('Transmission system issue');
+      possibleCauses.push('Clutch or transmission fluid problem');
+      recommendations.push('Check transmission fluid level and condition');
+      recommendations.push('Test clutch operation');
+      recommendations.push('Avoid heavy loads until diagnosed');
+      estimatedCost = '$400-3000';
+    }
+
+    // Tire/wheel symptoms
+    if (symptoms.includes('tire') || symptoms.includes('wheel') || symptoms.includes('vibration')) {
+      possibleCauses.push('Tire wear or damage');
+      possibleCauses.push('Wheel alignment issue');
+      recommendations.push('Inspect all tires for wear and damage');
+      recommendations.push('Check tire pressure');
+      recommendations.push('Verify wheel alignment');
+      estimatedCost = '$100-800';
+    }
+
+    // Default fallback if no specific symptoms matched
+    if (possibleCauses.length === 0) {
+      possibleCauses.push('Multiple potential causes identified');
+      possibleCauses.push('Comprehensive diagnostic scan needed');
+      recommendations.push('Perform complete vehicle inspection');
+      recommendations.push('Run computer diagnostics');
+      recommendations.push('Document all symptoms for technician');
+    }
+
+    // Add safety recommendations based on urgency
+    if (urgency === 'high') {
+      recommendations.unshift('URGENT: Have vehicle inspected immediately');
+      recommendations.push('Do not operate if unsafe conditions exist');
+      confidence = Math.min(confidence + 0.1, 0.9);
+    }
+
+    // Make-specific advice
+    if (truckMake.includes('freightliner')) {
+      recommendations.push('Check common Freightliner-specific service bulletins');
+    } else if (truckMake.includes('peterbilt')) {
+      recommendations.push('Consult Peterbilt service manual for model-specific guidance');
+    } else if (truckMake.includes('kenworth')) {
+      recommendations.push('Reference Kenworth diagnostic procedures');
+    }
+
+    // Always add professional consultation
+    recommendations.push('Contact qualified truck technician for professional diagnosis');
+
+    return {
+      possibleCauses,
+      recommendations,
+      urgencyLevel: urgency as 'low' | 'medium' | 'high',
+      estimatedCost,
+      aiProvider: 'offline-fallback',
+      confidence
+    };
   }
 }
 

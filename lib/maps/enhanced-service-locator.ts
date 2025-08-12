@@ -397,10 +397,8 @@ export class TruckServiceLocator {
     });
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private formatNominatimAddress(result: any): string {
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const address = result.address || {};
+  private formatNominatimAddress(result: Record<string, unknown>): string {
+    const address = (result.address as Record<string, unknown>) || {};
     const parts = [
       address.house_number,
       address.road,
@@ -412,8 +410,7 @@ export class TruckServiceLocator {
     return parts.join(', ');
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private formatOSMAddress(tags: any): string {
+  private formatOSMAddress(tags: Record<string, unknown>): string {
     const parts = [
       tags['addr:housenumber'],
       tags['addr:street'],
@@ -425,11 +422,9 @@ export class TruckServiceLocator {
     return parts.join(', ') || 'Address not available';
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
-  private extractNominatimServices(result: any): string[] {
+  private extractNominatimServices(result: Record<string, unknown>): string[] {
     const services: string[] = [];
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    const tags = result.extratags || {};
+    const tags = (result.extratags as Record<string, unknown>) || {};
     
     if (tags.amenity === 'fuel') services.push('Fuel');
     if (tags.service === 'vehicle:repair') services.push('Repair');

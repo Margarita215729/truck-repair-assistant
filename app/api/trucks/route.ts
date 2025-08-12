@@ -1,20 +1,26 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { MongoClient } from 'mongodb';
+import { staticTruckDataService } from '@/lib/services/static-truck-data';
 
-const MONGODB_URI = process.env.MONGODB_URI!;
+const MONGODB_URI = process.env.MONGODB_URI;
 const DB_NAME = process.env.MONGODB_DB_NAME || 'truck-repair-assistant';
 
 export async function GET(request: NextRequest) {
+  const { searchParams } = new URL(request.url);
+  const make = searchParams.get('make');
+  const model = searchParams.get('model');
+
+  // If MongoDB is not configured, use static data
+  if (!MONGODB_URI) {
+    return handleStaticData(make, model);
+  }
+
   try {
     const client = new MongoClient(MONGODB_URI);
     await client.connect();
     
     const db = client.db(DB_NAME);
     const trucksCollection = db.collection('trucks');
-    
-    const { searchParams } = new URL(request.url);
-    const make = searchParams.get('make');
-    const model = searchParams.get('model');
     
     if (make && model) {
       // Get specific truck details
@@ -62,7 +68,49 @@ export async function GET(request: NextRequest) {
     }
     
   } catch (error) {
-    console.error('Error fetching truck data:', error);
+    console.error('MongoDB error, falling back to static data:', error);
+    return handleStaticData(make, model);
+  }
+}
+
+function handleStaticData(make: string | null, model: string | null) {
+  try {
+    if (make && model) {
+      // Get specific truck details
+      const trucks = staticTruckDataService.getTrucksByMakeModel(make, model);
+      const truckModels = staticTruckDataService.convertToTruckModel(trucks);
+      
+      return NextResponse.json({
+        success: true,
+        trucks: truckModels.map(truck => ({
+          id: truck.id,
+          make: truck.make,
+          model: truck.model,
+          year: truck.years[0] || new Date().getFullYear(),
+          engines: truck.engines,
+          commonIssues: truck.commonIssues,
+          specifications: { years: truck.years }
+        }))
+      });
+    } else if (make) {
+      // Get models for a specific make
+      const models = staticTruckDataService.getModelsByMake(make);
+      
+      return NextResponse.json({
+        success: true,
+        models: models
+      });
+    } else {
+      // Get all makes
+      const makes = staticTruckDataService.getAllMakes();
+      
+      return NextResponse.json({
+        success: true,
+        makes: makes
+      });
+    }
+  } catch (error) {
+    console.error('Error using static truck data:', error);
     return NextResponse.json(
       { success: false, error: 'Failed to fetch truck data' },
       { status: 500 }

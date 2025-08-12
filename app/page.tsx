@@ -7,7 +7,22 @@ import { AudioRecorderWrapper } from '../components/audio/AudioRecorderWrapper';
 import { AudioAnalysisDisplay } from '../components/audio/AudioAnalysisDisplay';
 import { ServiceMapWrapper } from '../components/maps/ServiceMapWrapper';
 import type { DiagnosisResult } from '@/lib/ai/types';
-import type { TruckModel } from '../components/data/trucks/models';
+
+interface TruckModel {
+  id: string;
+  make: string;
+  model: string;
+  engines: string[];
+  years: number[];
+  commonIssues: string[];
+}
+
+interface DiagnosisRequest {
+  truck: TruckModel & { year: number; engine: string };
+  symptoms: string[];
+  additionalInfo?: string;
+  urgency: 'low' | 'medium' | 'high';
+}
 
 interface AudioAnalysis {
   duration: number;
@@ -25,20 +40,58 @@ export default function Home() {
   const [isDiagnosing, setIsDiagnosing] = useState(false);
 
   // Submit diagnosis data to AI service
-  const handleDiagnosisSubmit = async () => {
+  const handleDiagnosisSubmit = async (data: DiagnosisRequest) => {
     setIsDiagnosing(true);
     setDiagnosisResult(null);
+    
     try {
-      setDiagnosisResult({
-        possibleCauses: ['Engine oil level low', 'Turbocharger malfunction'],
-        recommendations: ['Check engine oil', 'Inspect turbocharger', 'Contact professional technician'],
-        urgencyLevel: 'medium',
-        estimatedCost: '$200-500',
-        aiProvider: 'demo',
-        confidence: 0.85,
+      const response = await fetch('/api/ai/diagnose', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          truckInfo: data.truck,
+          symptoms: data.symptoms.join(', '),
+          additionalInfo: data.additionalInfo,
+          urgency: data.urgency
+        }),
       });
-    } catch {
-      setDiagnosisResult(null);
+
+      const result = await response.json();
+      
+      if (result.success && result.result) {
+        setDiagnosisResult({
+          possibleCauses: result.result.possibleCauses || ['Unable to determine specific causes'],
+          recommendations: result.result.recommendations || ['Contact a professional mechanic for further inspection'],
+          urgencyLevel: result.result.urgencyLevel || data.urgency,
+          estimatedCost: result.result.estimatedCost || 'Contact service for estimate',
+          aiProvider: result.provider || 'unknown',
+          confidence: result.result.confidence || 0.7,
+        });
+      } else {
+        // Fallback to mock data if AI service fails
+        setDiagnosisResult({
+          possibleCauses: ['AI service temporarily unavailable', 'Multiple possible causes detected'],
+          recommendations: ['Contact a professional technician', 'Check basic maintenance items', 'Monitor symptoms closely'],
+          urgencyLevel: data.urgency,
+          estimatedCost: 'Contact service for estimate',
+          aiProvider: 'fallback',
+          confidence: 0.5,
+        });
+      }
+    } catch (error) {
+      console.error('Diagnosis error:', error);
+      
+      // Provide fallback diagnosis
+      setDiagnosisResult({
+        possibleCauses: ['Service temporarily unavailable', 'Diagnostic data collected for analysis'],
+        recommendations: ['Contact your nearest service center', 'Document all symptoms for technician', 'Ensure vehicle safety before continuing operation'],
+        urgencyLevel: data.urgency,
+        estimatedCost: 'Contact service for estimate',
+        aiProvider: 'offline',
+        confidence: 0.3,
+      });
     } finally {
       setIsDiagnosing(false);
     }
